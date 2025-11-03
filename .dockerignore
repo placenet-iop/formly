@@ -1,0 +1,10 @@
+node_modules
+.git
+.svelte-kit
+build
+*.sqlite
+*.sqlite-journal
+.env
+.env.*
+!.env.example
+npm-debug.log

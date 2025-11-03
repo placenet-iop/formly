@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+body {
+	background: #f9fafb;
+}
+
+/* Animation for streaming text cursor */
+@keyframes blink {
+	0%, 50% { opacity: 1; }
+	51%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+	animation: blink 1s infinite;
+}
+
+/* Slide-in animation */
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.slide-in {
+	animation: slideIn 0.3s ease-out;
+}

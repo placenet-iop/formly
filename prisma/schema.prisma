@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model domains {
+  domain_id String  @id
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  forms     forms[]
+}
+
+model forms {
+  id          Int      @id @default(autoincrement())
+  domain_id   String
+  title       String
+  description String?
+  fields      String   // JSON string: array of field definitions
+  is_active   Boolean  @default(true)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  domain      domains  @relation(fields: [domain_id], references: [domain_id], onDelete: Cascade)
+  submissions submissions[]
+
+  @@index([domain_id])
+}
+
+model submissions {
+  id          Int      @id @default(autoincrement())
+  form_id     Int
+  domain_id   String
+  avatar_id   String   @default("default")
+  data        String   // JSON string: submitted form data
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  form        forms    @relation(fields: [form_id], references: [id], onDelete: Cascade)
+
+  @@index([form_id])
+  @@index([domain_id])
+  @@index([avatar_id])
+}

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Projects/assist/**)",
+      "Read(//c/**)",
+      "Bash(cat:*)",
+      "Bash(tree:*)",
+      "Bash(npm create:*)",
+      "Bash(npx sv create:*)",
+      "Bash(npm install)",
+      "Bash(npx prisma:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(npm run build:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

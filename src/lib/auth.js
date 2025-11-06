@@ -1,9 +1,12 @@
 import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
+// Use process.env for server-side code (not import.meta.env which is for client-side)
+const JWKS_ENDPOINT = process.env.JWKS_ENDPOINT || 'http://localhost:3003/.well-known/jwks.json';
+
 // Create JWKS client with caching
 const client = jwksClient({
-	jwksUri: import.meta.env.VITE_JWKS_ENDPOINT,
+	jwksUri: JWKS_ENDPOINT,
 	cache: true,
 	cacheMaxAge: 600000, // 10 minutes in milliseconds
 	rateLimit: true,
@@ -56,7 +59,7 @@ export const getTokenPayload = async function (token) {
 		console.log('Token header:', decoded?.header);
 		console.log('Token kid:', decoded?.header?.kid);
 		console.log('Token algorithm:', decoded?.header?.alg);
-		console.log('JWKS endpoint:', import.meta.env.VITE_JWKS_ENDPOINT);
+		console.log('JWKS endpoint:', JWKS_ENDPOINT);
 
 		// Use jwt.verify with the getKey callback to fetch the key from JWKS
 		const payload = await new Promise((resolve, reject) => {

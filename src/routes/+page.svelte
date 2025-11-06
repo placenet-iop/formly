@@ -10,17 +10,26 @@
 
 		if (type === 'auth' && event.data.token) {
 			const token = event.data.token;
-			status = 'Loading forms...';
+			status = 'Loading...';
 
 			// Store token in Svelte store
 			setToken(token);
 
 			try {
-				// Redirect to forms list
-				goto('/forms');
+				// Decode JWT to check role (without verification, just to read the payload)
+				const payload = JSON.parse(atob(token.split('.')[1]));
+
+				// Redirect based on role
+				if (payload.role === 'admin') {
+					status = 'Loading admin panel...';
+					goto(`/.well-known/placenet/admin?token=${token}`);
+				} else {
+					status = 'Loading forms...';
+					goto(`/user?token=${token}`);
+				}
 			} catch (err) {
 				console.error('Error navigating:', err);
-				status = 'Error: Navigation failed';
+				status = 'Error: Invalid token or navigation failed';
 			}
 		}
 

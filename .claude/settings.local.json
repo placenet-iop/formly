@@ -10,7 +10,11 @@
       "Bash(npm install)",
       "Bash(npx prisma:*)",
       "Bash(npx prisma db push:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(curl:*)",
+      "Bash(openssl rsa:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

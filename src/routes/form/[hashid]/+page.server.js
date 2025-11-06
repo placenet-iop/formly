@@ -66,6 +66,7 @@ export const actions = {
 
 		let avatarId = 'anonymous';
 		let domainId = null;
+		let userMetadata = {};
 
 		// Try to get user info from token if available
 		if (token) {
@@ -73,6 +74,19 @@ export const actions = {
 			if (payload) {
 				domainId = payload.domain_id;
 				avatarId = payload.avatar_id || 'anonymous';
+
+				// Capture user metadata for display in submissions
+				userMetadata = {
+					avatar_name: payload.avatar_name || payload.avatar_id,
+					label: payload.label || payload.avatar_name || payload.avatar_id,
+					avatar_image: payload.avatar_image || '',
+					domain_name: payload.domain_name || payload.domain_id,
+					// Capture phone and email from scopes if available
+					...(payload.scopes && {
+						phone: payload.scopes.phone || '',
+						email: payload.scopes.email || ''
+					})
+				};
 			}
 		}
 
@@ -137,13 +151,16 @@ export const actions = {
 				});
 			}
 
-			// Save submission
+			// Save submission with user metadata
 			await prisma.submissions.create({
 				data: {
 					form_id: formId,
 					domain_id: domainId,
 					avatar_id: avatarId,
-					data: JSON.stringify(submissionData)
+					data: JSON.stringify({
+						formData: submissionData,
+						userMetadata: userMetadata
+					})
 				}
 			});
 

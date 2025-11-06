@@ -23,18 +23,30 @@
 	function exportToCSV() {
 		if (submissions.length === 0) return;
 
-		// CSV header
-		const headers = ['Submission ID', 'Submitted At', 'User ID', ...fields.map((f) => f.label)];
+		// CSV header with user metadata fields
+		const headers = [
+			'Submission ID',
+			'Submitted At',
+			'User Name',
+			'Email',
+			'Phone',
+			...fields.map((f) => f.label)
+		];
 		const csvRows = [headers.join(',')];
 
 		// CSV data
 		submissions.forEach((sub) => {
+			const formData = sub.data.formData || sub.data; // Handle both new and old format
+			const userMeta = sub.data.userMetadata || {};
+
 			const row = [
 				sub.id,
 				formatDate(sub.created_at),
-				sub.avatar_id,
+				userMeta.label || userMeta.avatar_name || sub.avatar_id,
+				userMeta.email || '',
+				userMeta.phone || '',
 				...fields.map((f) => {
-					const value = sub.data[f.id] || '';
+					const value = formData[f.id] || '';
 					// Escape commas and quotes
 					if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
 						return `"${value.replace(/"/g, '""')}"`;
@@ -103,11 +115,26 @@
 		{#if submissions.length > 0}
 			<div class="submissions-list">
 				{#each submissions as submission}
+					{@const userMeta = submission.data.userMetadata || {}}
+					{@const formData = submission.data.formData || submission.data}
 					<div class="submission-card">
 						<div class="submission-header">
-							<div>
-								<strong>Submission #{submission.id}</strong>
-								<span class="meta">by {submission.avatar_id}</span>
+							<div class="user-info">
+								{#if userMeta.avatar_image}
+									<img src={userMeta.avatar_image} alt={userMeta.label || userMeta.avatar_name} class="avatar" />
+								{/if}
+								<div>
+									<strong>Submission #{submission.id}</strong>
+									<div class="user-details">
+										<span class="user-name">{userMeta.label || userMeta.avatar_name || submission.avatar_id}</span>
+										{#if userMeta.email}
+											<span class="meta">📧 {userMeta.email}</span>
+										{/if}
+										{#if userMeta.phone}
+											<span class="meta">📱 {userMeta.phone}</span>
+										{/if}
+									</div>
+								</div>
 							</div>
 							<span class="date">{formatDate(submission.created_at)}</span>
 						</div>
@@ -116,10 +143,10 @@
 								<div class="response-item">
 									<div class="response-label">{field.label}</div>
 									<div class="response-value">
-										{#if Array.isArray(submission.data[field.id])}
-											{submission.data[field.id].join(', ') || '-'}
+										{#if Array.isArray(formData[field.id])}
+											{formData[field.id].join(', ') || '-'}
 										{:else}
-											{submission.data[field.id] || '-'}
+											{formData[field.id] || '-'}
 										{/if}
 									</div>
 								</div>
@@ -251,21 +278,49 @@
 	.submission-header {
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
+		align-items: flex-start;
 		margin-bottom: 1rem;
 		padding-bottom: 1rem;
 		border-bottom: 1px solid #e2e8f0;
 	}
 
+	.user-info {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+	}
+
+	.avatar {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 2px solid #e2e8f0;
+	}
+
+	.user-details {
+		margin-top: 0.25rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		align-items: center;
+	}
+
+	.user-name {
+		font-weight: 600;
+		color: #4a5568;
+		font-size: 0.95rem;
+	}
+
 	.meta {
-		margin-left: 0.75rem;
 		color: #718096;
-		font-size: 0.9rem;
+		font-size: 0.85rem;
 	}
 
 	.date {
 		color: #718096;
 		font-size: 0.9rem;
+		white-space: nowrap;
 	}
 
 	.submission-body {

@@ -55,11 +55,6 @@ export const getTokenPayload = async function (token) {
 	try {
 		// Decode token first to see the header and kid
 		const decoded = jwt.decode(token, { complete: true });
-		console.log('=== JWT Debug Info ===');
-		console.log('Token header:', decoded?.header);
-		console.log('Token kid:', decoded?.header?.kid);
-		console.log('Token algorithm:', decoded?.header?.alg);
-		console.log('JWKS endpoint:', JWKS_ENDPOINT);
 
 		// Use jwt.verify with the getKey callback to fetch the key from JWKS
 		const payload = await new Promise((resolve, reject) => {

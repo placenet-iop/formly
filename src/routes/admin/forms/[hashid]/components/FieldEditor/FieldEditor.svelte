@@ -1,0 +1,91 @@
+<script>
+	import { fieldTypes, getIcon } from '../utils.js';
+	import OptionEditor from '../OptionEditor/OptionEditor.svelte';
+
+	export let field;
+	export let index = 0;
+	export let totalFields = 0;
+	export let onMoveUp;
+	export let onMoveDown;
+	export let onRemove;
+	export let onUpdateOption;
+	export let onUpdateOptionTag;
+	export let onRemoveOption;
+	export let onAddOption;
+</script>
+
+<div class="field-editor">
+	<div class="field-header">
+		<span class="field-type-badge">
+			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				{@html getIcon(fieldTypes.find((ft) => ft.value === field.type)?.icon || 'type')}
+			</svg>
+			{fieldTypes.find((ft) => ft.value === field.type)?.label}
+		</span>
+		<div class="field-controls">
+			<button type="button" class="btn-icon" onclick={() => onMoveUp(index)} disabled={index === 0} title="Move up">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="18 15 12 9 6 15"></polyline>
+				</svg>
+			</button>
+			<button type="button" class="btn-icon" onclick={() => onMoveDown(index)} disabled={index === totalFields - 1} title="Move down">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="6 9 12 15 18 9"></polyline>
+				</svg>
+			</button>
+			<button type="button" class="btn-icon btn-icon-danger" onclick={() => onRemove(field.id)} title="Delete field">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="3 6 5 6 21 6"></polyline>
+					<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+				</svg>
+			</button>
+		</div>
+	</div>
+
+	<div class="field-body">
+		<div class="form-row">
+			<div class="form-group flex-1">
+				<label for="label-{field.id}">Label *</label>
+				<input type="text" id="label-{field.id}" bind:value={field.label} required placeholder="Field label" />
+			</div>
+			<div class="checkbox-column">
+				<div class="form-group checkbox-group checkbox-item">
+					<label for="required-{field.id}">
+						<input type="checkbox" id="required-{field.id}" bind:checked={field.required} />
+						Required
+					</label>
+				</div>
+				{#if field.type === 'select' || field.type === 'radio' || field.type === 'checkbox'}
+					<div class="form-group checkbox-group checkbox-item">
+						<label for="hasTag-{field.id}">
+							<input type="checkbox" id="hasTag-{field.id}" bind:checked={field.hasTag} />
+							Add tag
+						</label>
+					</div>
+				{/if}
+			</div>
+		</div>
+
+		{#if field.type !== 'select' && field.type !== 'radio' && field.type !== 'checkbox'}
+			<div class="form-group">
+				<label for="placeholder-{field.id}">Placeholder</label>
+				<input type="text" id="placeholder-{field.id}" bind:value={field.placeholder} placeholder="Placeholder text" />
+			</div>
+		{/if}
+
+		{#if field.type === 'select' || field.type === 'radio' || field.type === 'checkbox'}
+			<OptionEditor
+				{field}
+				{onUpdateOption}
+				{onUpdateOptionTag}
+				{onRemoveOption}
+				{onAddOption}
+			/>
+		{/if}
+	</div>
+</div>
+
+<style>
+	@import './FieldEditor.css';
+</style>
+

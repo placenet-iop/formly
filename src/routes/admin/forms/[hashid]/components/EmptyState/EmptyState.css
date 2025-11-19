@@ -1,0 +1,25 @@
+.empty-state {
+	text-align: center;
+	padding: 3rem 1rem;
+	color: #64748b;
+}
+
+.empty-icon {
+	margin: 0 auto 1rem;
+	color: #cbd5e0;
+}
+
+.empty-state p {
+	margin: 0.5rem 0;
+}
+
+.empty-state p:first-of-type {
+	font-weight: 500;
+	color: #475569;
+}
+
+.empty-hint {
+	font-size: 0.875rem;
+	color: #94a3b8;
+}
+

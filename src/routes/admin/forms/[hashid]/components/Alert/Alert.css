@@ -1,0 +1,28 @@
+.alert {
+	background: white;
+	padding: 1rem 1.25rem;
+	border-radius: 10px;
+	margin-bottom: 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	border: 1px solid #e2e8f0;
+}
+
+.alert.success {
+	background: #f0fdf4;
+	border-color: #86efac;
+	color: #166534;
+}
+
+.alert.error {
+	background: #fef2f2;
+	border-color: #fca5a5;
+	color: #991b1b;
+}
+
+.alert-icon {
+	flex-shrink: 0;
+}
+

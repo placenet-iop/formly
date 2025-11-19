@@ -1,0 +1,80 @@
+@import '../shared.css';
+
+.field-editor {
+	background: #fafafa;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	overflow: hidden;
+}
+
+.field-header {
+	background: #f8fafc;
+	padding: 1rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+.field-type-badge {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-weight: 500;
+	color: #334155;
+	font-size: 0.9375rem;
+}
+
+.field-controls {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.field-body {
+	padding: 1.5rem;
+	background: white;
+}
+
+.field-body .form-row {
+	align-items: flex-start;
+}
+
+.field-body .form-row .form-group {
+	display: flex;
+	flex-direction: column;
+}
+
+.checkbox-column {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	align-items: flex-start;
+	height: calc(0.625rem + 0.9375rem * 1.5 + 0.625rem + 2px);
+	margin-top: calc(0.9375rem * 1.5 + 0.5rem);
+}
+
+.checkbox-column .checkbox-item {
+	margin-bottom: 0 !important;
+	margin-top: 0 !important;
+	line-height: 1;
+}
+
+.checkbox-column .checkbox-item:first-child {
+	margin-top: 0;
+	padding-top: 0;
+}
+
+.checkbox-column .checkbox-item:last-child {
+	margin-bottom: 0;
+	margin-top: auto;
+	padding-bottom: 0;
+}
+
+.checkbox-column .checkbox-item label {
+	display: flex;
+	align-items: center;
+	margin-bottom: 0;
+	line-height: 1;
+	padding: 0;
+}
+

@@ -65,6 +65,14 @@
 	function getError(fieldId) {
 		return errors[fieldId] || '';
 	}
+
+	// Get option value (handles both old string format and new object format)
+	function getOptionValue(option) {
+		if (typeof option === 'string') {
+			return option;
+		}
+		return option?.value || '';
+	}
 </script>
 
 <svelte:head>
@@ -154,37 +162,40 @@
 								>
 									<option value="">Select an option...</option>
 									{#each field.options || [] as option}
-										<option value={option} selected={getFieldValue(field.id) === option}>
-											{option}
+										{@const optionValue = getOptionValue(option)}
+										<option value={optionValue} selected={getFieldValue(field.id) === optionValue}>
+											{optionValue}
 										</option>
 									{/each}
 								</select>
 							{:else if field.type === 'radio'}
 								<div class="options-group">
 									{#each field.options || [] as option, idx}
+										{@const optionValue = getOptionValue(option)}
 										<label class="option-label">
 											<input
 												type="radio"
 												name="field_{field.id}"
-												value={option}
+												value={optionValue}
 												required={field.required}
-												checked={getFieldValue(field.id) === option}
+												checked={getFieldValue(field.id) === optionValue}
 											/>
-											<span>{option}</span>
+											<span>{optionValue}</span>
 										</label>
 									{/each}
 								</div>
 							{:else if field.type === 'checkbox'}
 								<div class="options-group">
 									{#each field.options || [] as option, idx}
+										{@const optionValue = getOptionValue(option)}
 										<label class="option-label">
 											<input
 												type="checkbox"
 												name="field_{field.id}"
-												value={option}
-												checked={Array.isArray(getFieldValue(field.id)) && getFieldValue(field.id).includes(option)}
+												value={optionValue}
+												checked={Array.isArray(getFieldValue(field.id)) && getFieldValue(field.id).includes(optionValue)}
 											/>
-											<span>{option}</span>
+											<span>{optionValue}</span>
 										</label>
 									{/each}
 								</div>

@@ -183,20 +183,20 @@ export const actions = {
 				}
 			});
 
-			// Send tags to PlaceNet feedback API if token is available and fields have tags enabled
-			// This allows form responses to automatically tag users in the PlaceNet system
-			if (token) {
-				try {
-					/**
-					 * Helper function to send a tag to the PlaceNet feedback API
-					 * @param {string} tag - The tag key to send
-					 * @param {string} fieldLabel - The field label to use as the value
-					 */
-					async function sendTagToAPI(tag, fieldLabel) {
-						if (!tag || tag.trim() === '') {
-							return;
-						}
+		// Send tags to PlaceNet feedback API if token is available and fields have tags enabled
+		if (token) {
+			try {
+				/**
+				 * Send a tag to the PlaceNet feedback API
+				 * @param {string} tag - The tag key to send
+				 * @param {string} fieldLabel - The field label to use as the value
+				 */
+				async function sendTagToAPI(tag, fieldLabel) {
+					if (!tag || tag.trim() === '') {
+						return;
+					}
 
+					try {
 						const response = await fetch('https://api.placenet.com/feedback', {
 							method: 'POST',
 							headers: {
@@ -210,39 +210,52 @@ export const actions = {
 							})
 						});
 
-						if (!response.ok) {
-							console.error(`Failed to send tag to API: key="${tag}", status=${response.status}`);
+						if (response.ok) {
+							console.log('[Tag API] Successfully sent tag:', { key: tag, value: fieldLabel });
+						} else {
+							const errorText = await response.text();
+							console.error('[Tag API] Failed to send tag:', {
+								key: tag,
+								status: response.status,
+								error: errorText.substring(0, 200)
+							});
 						}
+					} catch (error) {
+						console.error('[Tag API] Error sending tag:', {
+							key: tag,
+							error: error instanceof Error ? error.message : String(error)
+						});
 					}
+				}
 
-					// Process all fields that support tags (select, radio, checkbox)
-					for (const field of fields) {
-						if (
-							(field.type === 'select' || field.type === 'radio' || field.type === 'checkbox') &&
-							field.hasTag
-						) {
-							const normalizedOptions = normalizeOptions(field.options);
-							const submittedValue = submissionData[field.id];
+				// Process all fields that support tags (select, radio, checkbox)
+				for (const field of fields) {
+					if (
+						(field.type === 'select' || field.type === 'radio' || field.type === 'checkbox') &&
+						field.hasTag
+					) {
+						const normalizedOptions = normalizeOptions(field.options);
+						const submittedValue = submissionData[field.id];
 
-							if (submittedValue) {
-								// Normalize to array: checkbox returns array, select/radio returns single value
-								const valuesToProcess = Array.isArray(submittedValue) ? submittedValue : [submittedValue];
+						if (submittedValue) {
+							// Normalize to array: checkbox returns array, select/radio returns single value
+							const valuesToProcess = Array.isArray(submittedValue) ? submittedValue : [submittedValue];
 
-								// Send tag for each selected option that has a tag configured
-								for (const val of valuesToProcess) {
-									const option = normalizedOptions.find((opt) => opt.value === val);
-									if (option && option.tag) {
-										await sendTagToAPI(option.tag, field.label);
-									}
+							// Send tag for each selected option that has a tag configured
+							for (const val of valuesToProcess) {
+								const option = normalizedOptions.find((opt) => opt.value === val);
+								if (option && option.tag) {
+									await sendTagToAPI(option.tag, field.label);
 								}
 							}
 						}
 					}
-				} catch (e) {
-					// Log error but don't fail the submission - tag sending is non-critical
-					console.error('Error sending tags to API:', e);
 				}
+			} catch (e) {
+				// Log error but don't fail the submission - tag sending is non-critical
+				console.error('[Tag API] Error in tag processing:', e instanceof Error ? e.message : String(e));
 			}
+		}
 
 			return { message: 'Form submitted successfully!', messageType: 'success', submitted: true };
 		} catch (e) {

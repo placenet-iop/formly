@@ -2,7 +2,8 @@ import jwt from 'jsonwebtoken';
 import jwksClient from 'jwks-rsa';
 
 // Use process.env for server-side code (not import.meta.env which is for client-side)
-const JWKS_ENDPOINT = process.env.JWKS_ENDPOINT || 'https://api.placenet.app/.well-known/jwks.json';
+const JWKS_ENDPOINT =  import.meta.env.VITE_JWKS_URI || 'https://api.placenet.app/.well-known/jwks.json';
+
 
 // Create JWKS client with caching
 const client = jwksClient({

@@ -196,8 +196,8 @@ export const actions = {
 						if (!tag || tag.trim() === '') {
 							return;
 						}
-
-						const response = await fetch('https://api.placenet.com/feedback', {
+						const url_startpoint = import.meta.env.VITE_FEEDBACK_API_URL || 'https://api.placenet.app';
+						const response = await fetch(`${url_startpoint}/feedback`, {
 							method: 'POST',
 							headers: {
 								Authorization: `Bearer ${token}`,
@@ -212,6 +212,9 @@ export const actions = {
 
 						if (!response.ok) {
 							console.error(`Failed to send tag to API: key="${tag}", status=${response.status}`);
+							console.error('response', await response.text());
+						} else {
+							console.log('Tag sent successfully', "tag: " + tag + " fieldLabel: " + fieldLabel);
 						}
 					}
 

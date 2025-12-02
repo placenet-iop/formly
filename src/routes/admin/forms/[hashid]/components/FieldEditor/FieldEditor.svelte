@@ -12,9 +12,24 @@
 	export let onUpdateOptionTag;
 	export let onRemoveOption;
 	export let onAddOption;
+	export let onDragStart;
+	export let onDragOver;
+	export let onDrop;
+	export let onDragEnd;
+	export let isDragging = false;
+	export let isDraggedOver = false;
 </script>
 
-<div class="field-editor">
+<div
+	class="field-editor"
+	class:dragging={isDragging}
+	class:drag-over={isDraggedOver}
+	draggable="true"
+	ondragstart={() => onDragStart(index)}
+	ondragover={(event) => onDragOver(event, index)}
+	ondrop={(event) => onDrop(index, event)}
+	ondragend={onDragEnd}
+>
 	<div class="field-header">
 		<span class="field-type-badge">
 			<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

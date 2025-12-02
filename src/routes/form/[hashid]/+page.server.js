@@ -118,23 +118,6 @@ export const actions = {
 				return fail(500, { message: 'Form configuration error', messageType: 'error' });
 			}
 
-			/**
-			 * Normalize field options to handle both legacy (string) and new (object) formats
-			 * Legacy format: ['Option 1', 'Option 2']
-			 * New format: [{ value: 'Option 1', tag: 'tag1' }, { value: 'Option 2', tag: 'tag2' }]
-			 * @param {Array<string|Object>} options - Field options in either format
-			 * @returns {Array<{value: string, tag: string}>} Normalized options array
-			 */
-			function normalizeOptions(options) {
-				if (!options) return [];
-				return options.map((opt) => {
-					if (typeof opt === 'string') {
-						return { value: opt, tag: '' };
-					}
-					return { value: opt.value || '', tag: opt.tag || '' };
-				});
-			}
-
 			// Validate required fields
 			const submissionData = {};
 			const errors = {};
@@ -151,11 +134,9 @@ export const actions = {
 						errors[field.id] = `${field.label} is required`;
 					}
 				} else {
-					// Convert FormDataEntryValue to string (handles both string and File types)
-					const stringValue = typeof value === 'string' ? value : value?.toString() || '';
-					submissionData[field.id] = stringValue;
+					submissionData[field.id] = value || '';
 
-					if (field.required && (!stringValue || stringValue.trim() === '')) {
+					if (field.required && (!value || value.trim() === '')) {
 						errors[field.id] = `${field.label} is required`;
 					}
 				}
@@ -182,70 +163,6 @@ export const actions = {
 					})
 				}
 			});
-
-			// Send tags to PlaceNet feedback API if token is available and fields have tags enabled
-			// This allows form responses to automatically tag users in the PlaceNet system
-			if (token) {
-				try {
-					/**
-					 * Helper function to send a tag to the PlaceNet feedback API
-					 * @param {string} tag - The tag key to send
-					 * @param {string} fieldLabel - The field label to use as the value
-					 */
-					async function sendTagToAPI(tag, fieldLabel) {
-						if (!tag || tag.trim() === '') {
-							return;
-						}
-						const url_startpoint = import.meta.env.VITE_FEEDBACK_API_URL || 'https://api.placenet.app';
-						const response = await fetch(`${url_startpoint}/feedback`, {
-							method: 'POST',
-							headers: {
-								Authorization: `Bearer ${token}`,
-								'Content-Type': 'application/json'
-							},
-							body: JSON.stringify({
-								type: 'tag',
-								key: tag,
-								value: fieldLabel
-							})
-						});
-
-						if (!response.ok) {
-							console.error(`Failed to send tag to API: key="${tag}", status=${response.status}`);
-							console.error('response', await response.text());
-						} else {
-							console.log('Tag sent successfully', "tag: " + tag + " fieldLabel: " + fieldLabel);
-						}
-					}
-
-					// Process all fields that support tags (select, radio, checkbox)
-					for (const field of fields) {
-						if (
-							(field.type === 'select' || field.type === 'radio' || field.type === 'checkbox') &&
-							field.hasTag
-						) {
-							const normalizedOptions = normalizeOptions(field.options);
-							const submittedValue = submissionData[field.id];
-
-							if (submittedValue) {
-								// Normalize to array: checkbox returns array, select/radio returns single value
-								const valuesToProcess = Array.isArray(submittedValue) ? submittedValue : [submittedValue];
-
-								// Send tag for each selected option that has a tag configured
-								for (const val of valuesToProcess) {
-									const option = normalizedOptions.find((opt) => opt.value === val);
-									if (option && option.tag) {
-										await sendTagToAPI(option.tag, field.label);
-									}
-								}
-							}
-						}
-					}
-				} catch (e) {
-					// Log error but don't fail the submission - tag sending is non-critical
-					console.error('Error sending tags to API:', e);
-				}
-			}
 
 			return { message: 'Form submitted successfully!', messageType: 'success', submitted: true };
 		} catch (e) {

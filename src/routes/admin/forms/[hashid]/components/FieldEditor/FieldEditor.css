@@ -5,6 +5,22 @@
 	border: 1px solid #e2e8f0;
 	border-radius: 10px;
 	overflow: hidden;
+	cursor: grab;
+	transition: all 0.2s ease;
+}
+
+.field-editor:active {
+	cursor: grabbing;
+}
+
+.field-editor.dragging {
+	opacity: 0.5;
+	transform: scale(0.98);
+}
+
+.field-editor.drag-over {
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .field-header {

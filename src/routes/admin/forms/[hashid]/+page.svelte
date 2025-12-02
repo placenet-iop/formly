@@ -17,6 +17,10 @@
 
 	let message = '';
 	let messageType = '';
+	let dragIndex = null;
+	let dragOverIndex = null;
+	let paletteDragType = '';
+	let isDraggingOver = false;
 
 	onMount(() => {
 		if (data) {
@@ -125,6 +129,63 @@
 			return f;
 		});
 	}
+
+	function handleDragStart(index) {
+		dragIndex = index;
+	}
+
+	function handleDragOver(event, index) {
+		event.preventDefault();
+		if (dragOverIndex !== index) {
+			dragOverIndex = index;
+		}
+	}
+
+	function handleDrop(index, event) {
+		event?.stopPropagation();
+		if (dragIndex === null || dragIndex === index) {
+			dragIndex = null;
+			dragOverIndex = null;
+			return;
+		}
+		const newFields = [...fields];
+		const [moved] = newFields.splice(dragIndex, 1);
+		newFields.splice(index, 0, moved);
+		fields = newFields;
+		dragIndex = null;
+		dragOverIndex = null;
+	}
+
+	function handleDragEnd() {
+		dragIndex = null;
+		dragOverIndex = null;
+	}
+
+	function handleTypeDragStart(type, event) {
+		paletteDragType = type;
+		event.dataTransfer.setData('text/plain', type);
+	}
+
+	function handleFieldListDragOver(event) {
+		if (event.dataTransfer?.types?.includes('text/plain')) {
+			event.preventDefault();
+			isDraggingOver = true;
+		}
+	}
+
+	function handleFieldListDrop(event) {
+		event.preventDefault();
+		isDraggingOver = false;
+		const type = event.dataTransfer?.getData('text/plain') || paletteDragType;
+		if (type) {
+			addField(type);
+		}
+		paletteDragType = '';
+	}
+
+	function handleDragLeave() {
+		isDraggingOver = false;
+	}
 </script>
 
 <svelte:head>
@@ -158,7 +219,7 @@
 	<Alert {message} {messageType} />
 
 	<div class="builder-layout">
-		<FieldSidebar onAddField={addField} />
+		<FieldSidebar onAddField={addField} onTypeDragStart={handleTypeDragStart} />
 
 		<main class="editor">
 			<form
@@ -179,9 +240,20 @@
 					<h2>Form Fields</h2>
 
 					{#if fields.length === 0}
-						<EmptyState />
+						<EmptyState
+							{isDraggingOver}
+							onDragOver={handleFieldListDragOver}
+							onDrop={handleFieldListDrop}
+							onDragLeave={handleDragLeave}
+						/>
 					{:else}
-						<div class="fields-list">
+						<div
+							class="fields-list"
+							class:drop-target={isDraggingOver}
+							ondragover={handleFieldListDragOver}
+							ondrop={handleFieldListDrop}
+							ondragleave={handleDragLeave}
+						>
 							{#each fields as field, index (field.id)}
 								<FieldEditor
 									{field}
@@ -194,6 +266,12 @@
 									onUpdateOptionTag={updateOptionTag}
 									onRemoveOption={removeOption}
 									onAddOption={addOption}
+									onDragStart={handleDragStart}
+									onDragOver={handleDragOver}
+									onDrop={handleDrop}
+									onDragEnd={handleDragEnd}
+									isDragging={dragIndex === index}
+									isDraggedOver={dragOverIndex === index}
 								/>
 							{/each}
 						</div>
@@ -251,6 +329,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		transition: all 0.2s ease;
+	}
+
+	.fields-list.drop-target {
+		background: #eff6ff;
+		border-radius: 10px;
+		padding: 0.5rem;
 	}
 
 

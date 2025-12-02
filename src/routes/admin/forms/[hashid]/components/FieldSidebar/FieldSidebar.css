@@ -11,6 +11,13 @@
 	top: 2rem;
 }
 
+.sidebar-hint {
+	font-size: 0.875rem;
+	color: #64748b;
+	margin: 0 0 1rem;
+	line-height: 1.5;
+}
+
 .field-types {
 	display: flex;
 	flex-direction: column;
@@ -22,7 +29,7 @@
 	border: 1px solid #e2e8f0;
 	border-radius: 8px;
 	padding: 0.75rem;
-	cursor: pointer;
+	cursor: grab;
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
@@ -30,6 +37,10 @@
 	font-size: 0.9375rem;
 	color: #334155;
 	font-weight: 500;
+}
+
+.field-type-btn:active {
+	cursor: grabbing;
 }
 
 .field-type-btn:hover {

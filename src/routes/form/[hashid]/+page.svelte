@@ -12,8 +12,16 @@
 	let submitted = false;
 	let errors = {};
 	let values = {};
+	let brandColor = '#2563eb';
 
 	onMount(() => {
+		try {
+			const payload = JSON.parse(atob(data.token.split('.')[1]));
+			brandColor = payload?.ui?.color || brandColor;
+		} catch (err) {
+			console.warn('No se pudo leer ui.color del token', err);
+		}
+
 		if (data) {
 			formData = data.form;
 			fields = data.form.fields || [];
@@ -65,30 +73,34 @@
 	function getError(fieldId) {
 		return errors[fieldId] || '';
 	}
-
-	// Get option value (handles both old string format and new object format)
-	function getOptionValue(option) {
-		if (typeof option === 'string') {
-			return option;
-		}
-		return option?.value || '';
-	}
 </script>
 
 <svelte:head>
 	<title>{formData?.title || 'Form'}</title>
 </svelte:head>
 
-<div class="container">
+<div class="container" style={`--accent:${brandColor};`}>
 	{#if submitted}
 		<div class="success-screen">
-			<div class="success-icon">✅</div>
-			<h1>Thank you!</h1>
-			<p class="success-message">Your response has been submitted successfully.</p>
+			<div class="success-icon">
+				<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"></circle>
+					<polyline points="8 12.5 11 15.5 16 9"></polyline>
+				</svg>
+			</div>
+			<h1>¡Respuesta enviada!</h1>
+			<p class="success-message">Gracias por tu tiempo. Hemos recibido tus datos correctamente.</p>
 		</div>
 	{:else}
 		<div class="form-wrapper">
 			<header class="form-header">
+				<div class="pill">
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<rect x="3" y="5" width="18" height="14" rx="2"></rect>
+						<path d="M7 9h10M7 13h6"></path>
+					</svg>
+					<span>Formulario seguro</span>
+				</div>
 				<h1>{formData?.title || 'Form'}</h1>
 				{#if formData?.description}
 					<p class="form-description">{formData.description}</p>
@@ -97,7 +109,19 @@
 
 			{#if message && !submitted}
 				<div class="alert {messageType}">
-					<span class="alert-icon">{messageType === 'success' ? '✓' : '⚠'}</span>
+					<div class="alert-icon">
+						{#if messageType === 'success'}
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="4 12 9 17 20 6"></polyline>
+							</svg>
+						{:else}
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="12" cy="12" r="10"></circle>
+								<line x1="12" y1="8" x2="12" y2="12"></line>
+								<line x1="12" y1="16" x2="12.01" y2="16"></line>
+							</svg>
+						{/if}
+					</div>
 					<span>{message}</span>
 				</div>
 			{/if}
@@ -120,7 +144,7 @@
 							<label for="field-{field.id}" class="field-label">
 								{field.label}
 								{#if field.required}
-									<span class="required">*</span>
+									<span class="required">Requerido</span>
 								{/if}
 							</label>
 
@@ -160,42 +184,39 @@
 									required={field.required}
 									class="field-input"
 								>
-									<option value="">Select an option...</option>
+									<option value="">Selecciona una opción...</option>
 									{#each field.options || [] as option}
-										{@const optionValue = getOptionValue(option)}
-										<option value={optionValue} selected={getFieldValue(field.id) === optionValue}>
-											{optionValue}
+										<option value={option} selected={getFieldValue(field.id) === option}>
+											{option}
 										</option>
 									{/each}
 								</select>
 							{:else if field.type === 'radio'}
 								<div class="options-group">
 									{#each field.options || [] as option, idx}
-										{@const optionValue = getOptionValue(option)}
 										<label class="option-label">
 											<input
 												type="radio"
 												name="field_{field.id}"
-												value={optionValue}
+												value={option}
 												required={field.required}
-												checked={getFieldValue(field.id) === optionValue}
+												checked={getFieldValue(field.id) === option}
 											/>
-											<span>{optionValue}</span>
+											<span>{option}</span>
 										</label>
 									{/each}
 								</div>
 							{:else if field.type === 'checkbox'}
 								<div class="options-group">
 									{#each field.options || [] as option, idx}
-										{@const optionValue = getOptionValue(option)}
 										<label class="option-label">
 											<input
 												type="checkbox"
 												name="field_{field.id}"
-												value={optionValue}
-												checked={Array.isArray(getFieldValue(field.id)) && getFieldValue(field.id).includes(optionValue)}
+												value={option}
+												checked={Array.isArray(getFieldValue(field.id)) && getFieldValue(field.id).includes(option)}
 											/>
-											<span>{optionValue}</span>
+											<span>{option}</span>
 										</label>
 									{/each}
 								</div>
@@ -210,7 +231,11 @@
 
 				<div class="submit-section">
 					<button type="submit" class="btn-submit">
-						Submit
+						<span>Enviar respuesta</span>
+						<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+							<line x1="5" y1="12" x2="19" y2="12"></line>
+							<polyline points="12 5 19 12 12 19"></polyline>
+						</svg>
 					</button>
 				</div>
 			</form>
@@ -220,123 +245,141 @@
 
 <style>
 	:global(body) {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: #ffffff;
 		min-height: 100vh;
 		margin: 0;
-		padding: 2rem 1rem;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+		padding: 2rem 1rem 2.5rem;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		color: #0f172a;
 	}
 
 	.container {
-		max-width: 700px;
+		max-width: 820px;
 		margin: 0 auto;
 	}
 
 	.form-wrapper {
-		background: white;
+		background: #ffffff;
 		border-radius: 16px;
-		padding: 3rem;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		padding: 2rem 1.75rem;
+		box-shadow: 0 16px 50px rgba(15, 23, 42, 0.12);
+		border: 1px solid #e2e8f0;
 	}
 
 	.form-header {
-		margin-bottom: 2rem;
-		text-align: center;
+		margin-bottom: 1.5rem;
+	}
+
+	.pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.45rem 0.85rem;
+		border-radius: 999px;
+		background: color-mix(in srgb, var(--accent) 12%, white);
+		border: 1px solid color-mix(in srgb, var(--accent) 25%, #e2e8f0);
+		color: #0f172a;
+		font-weight: 700;
+		font-size: 0.92rem;
 	}
 
 	h1 {
-		font-size: 2.5rem;
-		margin: 0 0 1rem 0;
-		color: #2d3748;
+		font-size: 2.1rem;
+		margin: 0.5rem 0 0.35rem;
+		color: #0f172a;
+		letter-spacing: -0.02em;
 	}
 
 	.form-description {
-		font-size: 1.1rem;
-		color: #718096;
+		font-size: 1rem;
+		color: #475569;
 		margin: 0;
 		line-height: 1.6;
 	}
 
 	.alert {
-		background: white;
-		padding: 1rem 1.25rem;
+		background: #ecfdf3;
+		padding: 0.9rem 1rem;
 		border-radius: 12px;
-		margin-bottom: 2rem;
+		margin-bottom: 1.25rem;
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
-		animation: slideIn 0.3s ease-out;
-	}
-
-	@keyframes slideIn {
-		from {
-			opacity: 0;
-			transform: translateY(-10px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	.alert.success {
-		background: #d4edda;
-		color: #155724;
-		border-left: 4px solid #28a745;
+		gap: 0.65rem;
+		border: 1px solid #bbf7d0;
+		color: #166534;
 	}
 
 	.alert.error {
-		background: #f8d7da;
-		color: #721c24;
-		border-left: 4px solid #dc3545;
+		background: #fef2f2;
+		border-color: #fecdd3;
+		color: #991b1b;
 	}
 
 	.alert-icon {
-		font-size: 1.5rem;
-		font-weight: bold;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		border-radius: 10px;
+		background: #f8fafc;
+		color: inherit;
 	}
 
 	.fields-container {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
+		gap: 1.1rem;
 	}
 
 	.form-field {
 		display: flex;
 		flex-direction: column;
+		padding: 0.9rem 1rem 1.05rem;
+		border-radius: 12px;
+		border: 1px solid #e2e8f0;
+		background: #f8fafc;
 	}
 
-	.form-field.has-error .field-input {
-		border-color: #e53e3e;
+	.form-field.has-error {
+		border-color: #ef4444;
+		background: #fef2f2;
 	}
 
 	.field-label {
-		font-weight: 600;
-		color: #2d3748;
-		margin-bottom: 0.75rem;
-		font-size: 1.1rem;
+		font-weight: 700;
+		color: #0f172a;
+		margin-bottom: 0.5rem;
+		font-size: 1rem;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.required {
-		color: #e53e3e;
-		margin-left: 0.25rem;
+		color: #b91c1c;
+		font-size: 0.8rem;
+		background: #fee2e2;
+		padding: 0.2rem 0.45rem;
+		border-radius: 999px;
+		border: 1px solid #fecdd3;
 	}
 
 	.field-input {
-		padding: 1rem;
-		border: 2px solid #e2e8f0;
-		border-radius: 12px;
+		padding: 0.85rem 0.9rem;
+		border: 1px solid #e2e8f0;
+		border-radius: 10px;
 		font-family: inherit;
 		font-size: 1rem;
 		transition: all 0.2s;
-		background: white;
+		background: #ffffff;
+		color: #0f172a;
 	}
 
 	.field-input:focus {
 		outline: none;
-		border-color: #667eea;
-		box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
 	}
 
 	textarea.field-input {
@@ -351,69 +394,70 @@
 	.options-group {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
-		padding: 0.5rem 0;
+		gap: 0.6rem;
+		padding-top: 0.25rem;
 	}
 
 	.option-label {
 		display: flex;
 		align-items: center;
-		gap: 0.75rem;
-		padding: 0.75rem 1rem;
-		background: #f7fafc;
-		border: 2px solid #e2e8f0;
+		gap: 0.65rem;
+		padding: 0.7rem 0.85rem;
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
 		border-radius: 10px;
 		cursor: pointer;
 		transition: all 0.2s;
 	}
 
 	.option-label:hover {
-		background: white;
-		border-color: #cbd5e0;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
 	}
 
 	.option-label input {
 		cursor: pointer;
-		width: 1.2rem;
-		height: 1.2rem;
+		width: 1.1rem;
+		height: 1.1rem;
 	}
 
 	.option-label span {
 		flex: 1;
 		font-size: 1rem;
-		color: #2d3748;
+		color: #0f172a;
 	}
 
 	.field-error {
-		color: #e53e3e;
-		font-size: 0.9rem;
+		color: #b91c1c;
+		font-size: 0.92rem;
 		margin-top: 0.5rem;
-		font-weight: 500;
+		font-weight: 600;
 	}
 
 	.submit-section {
-		margin-top: 3rem;
+		margin-top: 1.75rem;
 		text-align: center;
 	}
 
 	.btn-submit {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background: var(--accent);
 		color: white;
-		padding: 1.25rem 4rem;
+		padding: 0.95rem 1.4rem;
 		border: none;
-		border-radius: 50px;
-		font-size: 1.2rem;
+		border-radius: 12px;
+		font-size: 1rem;
 		font-weight: 700;
 		cursor: pointer;
-		box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-		transition: all 0.3s;
-		text-transform: uppercase;
-		letter-spacing: 1px;
+		box-shadow: 0 14px 40px color-mix(in srgb, var(--accent) 35%, transparent);
+		transition: all 0.2s ease;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
 	}
 
 	.btn-submit:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+		box-shadow: 0 18px 48px color-mix(in srgb, var(--accent) 45%, transparent);
 	}
 
 	.btn-submit:active {
@@ -421,60 +465,55 @@
 	}
 
 	.success-screen {
-		background: white;
+		background: #ffffff;
 		border-radius: 16px;
-		padding: 4rem 3rem;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		padding: 3rem 2.5rem;
+		box-shadow: 0 16px 60px rgba(15, 23, 42, 0.14);
 		text-align: center;
+		border: 1px solid #e2e8f0;
 	}
 
 	.success-icon {
-		font-size: 6rem;
-		margin-bottom: 1.5rem;
-		animation: bounce 0.6s ease-out;
-	}
-
-	@keyframes bounce {
-		0%,
-		20%,
-		50%,
-		80%,
-		100% {
-			transform: translateY(0);
-		}
-		40% {
-			transform: translateY(-30px);
-		}
-		60% {
-			transform: translateY(-15px);
-		}
+		width: 96px;
+		height: 96px;
+		margin: 0 auto 1.25rem;
+		border-radius: 50%;
+		border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+		background: color-mix(in srgb, var(--accent) 12%, white);
+		display: grid;
+		place-items: center;
+		color: var(--accent);
 	}
 
 	.success-screen h1 {
-		color: #2d3748;
-		margin-bottom: 1rem;
+		color: #0f172a;
+		margin-bottom: 0.5rem;
 	}
 
 	.success-message {
-		font-size: 1.2rem;
-		color: #718096;
+		font-size: 1.05rem;
+		color: #475569;
 		line-height: 1.6;
+		margin: 0;
 	}
 
 	@media (max-width: 768px) {
+		:global(body) {
+			padding: 1.25rem 1rem 2rem;
+		}
+
 		.form-wrapper,
 		.success-screen {
-			padding: 2rem 1.5rem;
+			padding: 1.5rem 1.25rem;
 		}
 
 		h1 {
-			font-size: 2rem;
+			font-size: 1.75rem;
 		}
 
 		.btn-submit {
-			padding: 1rem 3rem;
-			font-size: 1rem;
 			width: 100%;
+			justify-content: center;
 		}
 	}
 </style>

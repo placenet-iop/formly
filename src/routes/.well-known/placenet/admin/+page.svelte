@@ -63,32 +63,13 @@
 <div class="container">
 	<header class="page-header">
 		<div class="brand">
-			<div class="brand-mark">
-				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<rect x="3" y="4" width="18" height="16" rx="3"></rect>
-					<path d="M7 9h10M7 13h6"></path>
-				</svg>
-			</div>
+			
 			<div>
 				<h1>Formly</h1>
 				<p class="subtitle">Panel de control para formularios y respuestas</p>
 			</div>
 		</div>
-		<div class="pill-row">
-			<div class="pill success">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<polyline points="4 12 9 17 20 6"></polyline>
-				</svg>
-				<span>Flujo seguro</span>
-			</div>
-			<div class="pill">
-				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<circle cx="12" cy="12" r="10"></circle>
-					<path d="M12 6v6l3 3"></path>
-				</svg>
-				<span>Tiempo real</span>
-			</div>
-		</div>
+		
 	</header>
 
 	{#if message}

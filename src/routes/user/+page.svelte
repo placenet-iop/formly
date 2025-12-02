@@ -1,39 +1,72 @@
 <script>
+	import { onMount } from 'svelte';
+
 	export let data;
 
 	const { user, forms, token } = data;
+
+	let brandColor = '#2563eb';
+
+	onMount(() => {
+		try {
+			const payload = JSON.parse(atob(token.split('.')[1]));
+			brandColor = payload?.ui?.color || brandColor;
+		} catch (err) {
+			console.warn('No se pudo leer ui.color del token', err);
+		}
+	});
 </script>
 
 <svelte:head>
-	<title>Available Forms</title>
+	<title>Formularios disponibles</title>
 </svelte:head>
 
-<div class="container">
-	<header>
-		<h1>Available Forms</h1>
-		<p class="subtitle">Welcome, {user.avatar_name} @ {user.domain_name}</p>
+<div class="page" style={`--accent:${brandColor};`}>
+	<header class="header">
+		<div>
+			<p class="eyebrow">{user.avatar_name} · {user.domain_name}</p>
+			<h1>Formularios activos</h1>
+			<p class="subtitle">Selecciona y completa en pocos clics.</p>
+		</div>
+		<div class="pill">
+			<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="4 12 9 17 20 6"></polyline>
+			</svg>
+			<span>{forms?.length || 0} disponibles</span>
+		</div>
 	</header>
 
-	<section class="card">
+	<section class="panel">
 		{#if forms && forms.length > 0}
-			<div class="forms-grid">
+			<div class="forms">
 				{#each forms as form}
 					<a href="/form/{form.hashid}?token={token}" class="form-card">
-						<div class="form-info">
+						<div>
 							<div class="form-title">{form.title}</div>
 							{#if form.description}
-								<div class="form-description">{form.description}</div>
+								<div class="form-desc">{form.description}</div>
 							{/if}
 						</div>
-						<div class="form-arrow">→</div>
+						<div class="cta">
+							<span>Rellenar</span>
+							<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<polyline points="9 18 15 12 9 6"></polyline>
+							</svg>
+						</div>
 					</a>
 				{/each}
 			</div>
 		{:else}
-			<div class="empty-state">
-				<div class="empty-icon">📝</div>
-				<p>No forms available</p>
-				<p class="empty-hint">There are currently no active forms for your domain</p>
+			<div class="empty">
+				<div class="icon">
+					<svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+						<rect x="3" y="4" width="18" height="16" rx="2"></rect>
+						<path d="M7 9h10M7 13h6"></path>
+						<polyline points="3 8 12 13 21 8"></polyline>
+					</svg>
+				</div>
+				<p class="empty-title">Sin formularios activos</p>
+				<p class="empty-sub">Cuando haya uno disponible aparecerá aquí.</p>
 			</div>
 		{/if}
 	</section>
@@ -41,123 +74,150 @@
 
 <style>
 	:global(body) {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		min-height: 100vh;
+		background: #ffffff;
 		margin: 0;
-		padding: 2rem 1rem;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+		padding: 1.5rem 1rem 2rem;
+		font-family: 'Inter', system-ui, -apple-system, sans-serif;
+		color: #0f172a;
 	}
 
-	.container {
-		max-width: 800px;
+	.page {
+		max-width: 900px;
 		margin: 0 auto;
-	}
-
-	header {
-		text-align: center;
-		margin-bottom: 2rem;
-		color: white;
-	}
-
-	h1 {
-		font-size: 2.5rem;
-		margin: 0 0 0.5rem 0;
-		font-weight: 700;
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	}
-
-	.subtitle {
-		font-size: 1.1rem;
-		margin: 0;
-		opacity: 0.9;
-	}
-
-	.card {
-		background: white;
-		border-radius: 12px;
-		padding: 2rem;
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-	}
-
-	.forms-grid {
 		display: flex;
 		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
 		gap: 1rem;
 	}
 
-	.form-card {
-		background: #f7fafc;
-		border: 2px solid #e2e8f0;
-		border-radius: 12px;
-		padding: 1.5rem;
-		transition: all 0.2s;
-		text-decoration: none;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.form-card:hover {
-		border-color: #667eea;
-		background: white;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		transform: translateX(5px);
-	}
-
-	.form-info {
-		flex: 1;
-	}
-
-	.form-title {
+	.eyebrow {
+		margin: 0;
 		font-weight: 600;
-		color: #2d3748;
-		font-size: 1.2rem;
-		margin-bottom: 0.5rem;
-	}
-
-	.form-description {
-		color: #718096;
+		color: #475569;
 		font-size: 0.95rem;
 	}
 
-	.form-arrow {
-		font-size: 1.5rem;
-		color: #667eea;
-		transition: transform 0.2s;
+	h1 {
+		margin: 0.25rem 0 0.35rem;
+		font-size: 2rem;
+		letter-spacing: -0.02em;
 	}
 
-	.form-card:hover .form-arrow {
-		transform: translateX(5px);
+	.subtitle {
+		margin: 0;
+		color: #64748b;
 	}
 
-	.empty-state {
+	.pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.55rem 0.9rem;
+		border-radius: 10px;
+		background: color-mix(in srgb, var(--accent) 15%, white);
+		color: #0f172a;
+		font-weight: 700;
+		border: 1px solid color-mix(in srgb, var(--accent) 35%, #e2e8f0);
+		white-space: nowrap;
+	}
+
+	.panel {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 14px;
+		padding: 1rem;
+		box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+	}
+
+	.forms {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.form-card {
+		border: 1px solid #e2e8f0;
+		border-radius: 12px;
+		padding: 0.9rem 1rem;
+		text-decoration: none;
+		color: inherit;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75rem;
+		transition: border-color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease;
+	}
+
+	.form-card:hover {
+		border-color: var(--accent);
+		box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+		transform: translateY(-2px);
+	}
+
+	.form-title {
+		font-weight: 700;
+		font-size: 1.05rem;
+		margin-bottom: 0.15rem;
+	}
+
+	.form-desc {
+		color: #475569;
+		font-size: 0.95rem;
+	}
+
+	.cta {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		padding: 0.5rem 0.8rem;
+		border-radius: 10px;
+		background: var(--accent);
+		color: #fff;
+		font-weight: 700;
+		border: 1px solid var(--accent);
+	}
+
+	.empty {
 		text-align: center;
-		padding: 3rem 1rem;
-		color: #718096;
+		padding: 2.5rem 1rem;
+		color: #475569;
 	}
 
-	.empty-icon {
-		font-size: 4rem;
-		margin-bottom: 1rem;
-		opacity: 0.5;
+	.icon {
+		display: grid;
+		place-items: center;
+		width: 72px;
+		height: 72px;
+		border-radius: 50%;
+		border: 1px solid #e2e8f0;
+		margin: 0 auto 1rem;
+		background: #f8fafc;
 	}
 
-	.empty-state p {
-		margin: 0.5rem 0;
+	.empty-title {
+		margin: 0;
+		font-weight: 700;
+		color: #0f172a;
 	}
 
-	.empty-hint {
-		font-size: 0.875rem;
-		opacity: 0.8;
+	.empty-sub {
+		margin: 0.35rem 0 0;
+		color: #64748b;
 	}
 
 	@media (max-width: 768px) {
-		h1 {
-			font-size: 2rem;
+		.header {
+			flex-direction: column;
 		}
 
-		.card {
-			padding: 1.5rem;
+		h1 {
+			font-size: 1.7rem;
 		}
 	}
 </style>

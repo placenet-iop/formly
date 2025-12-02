@@ -61,9 +61,34 @@
 </svelte:head>
 
 <div class="container">
-	<header>
-		<h1>Formly</h1>
-		<p class="subtitle">Manage your forms and submissions</p>
+	<header class="page-header">
+		<div class="brand">
+			<div class="brand-mark">
+				<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<rect x="3" y="4" width="18" height="16" rx="3"></rect>
+					<path d="M7 9h10M7 13h6"></path>
+				</svg>
+			</div>
+			<div>
+				<h1>Formly</h1>
+				<p class="subtitle">Panel de control para formularios y respuestas</p>
+			</div>
+		</div>
+		<div class="pill-row">
+			<div class="pill success">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="4 12 9 17 20 6"></polyline>
+				</svg>
+				<span>Flujo seguro</span>
+			</div>
+			<div class="pill">
+				<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="12" cy="12" r="10"></circle>
+					<path d="M12 6v6l3 3"></path>
+				</svg>
+				<span>Tiempo real</span>
+			</div>
+		</div>
 	</header>
 
 	{#if message}
@@ -257,60 +282,106 @@
 {/if}
 
 <style>
+	@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 	:global(body) {
-		background: #f8fafc;
+		background: radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.1), transparent 25%),
+			radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.12), transparent 20%),
+			linear-gradient(180deg, #f7f9fb 0%, #eef2f7 30%, #f7f9fb 100%);
 		min-height: 100vh;
 		margin: 0;
 		padding: 0;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+		font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
 	}
 
 	.container {
 		max-width: 1200px;
 		margin: 0 auto;
-		padding: 2rem 1rem;
+		padding: 2.25rem 1rem 2.5rem;
 	}
 
-	header {
-		margin-bottom: 2.5rem;
+	.page-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 2rem;
+	}
+
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 0.85rem;
+	}
+
+	.brand-mark {
+		width: 48px;
+		height: 48px;
+		border-radius: 14px;
+		background: linear-gradient(135deg, #0ea5e9, #6366f1);
+		display: grid;
+		place-items: center;
+		color: #f8fafc;
+		box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3);
 	}
 
 	h1 {
-		font-size: 2.25rem;
-		margin: 0 0 0.5rem 0;
+		font-size: 2.15rem;
+		margin: 0 0 0.35rem 0;
 		color: #0f172a;
 		font-weight: 700;
-		letter-spacing: -0.025em;
+		letter-spacing: -0.02em;
 	}
 
 	.subtitle {
 		font-size: 1rem;
-		color: #64748b;
+		color: #475569;
 		margin: 0;
-		font-weight: 400;
+		font-weight: 500;
+	}
+
+	.pill-row {
+		display: flex;
+		gap: 0.5rem;
+	}
+
+	.pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		padding: 0.55rem 0.85rem;
+		border-radius: 12px;
+		background: #e0f2fe;
+		color: #0f172a;
+		font-weight: 600;
+		border: 1px solid #bae6fd;
+	}
+
+	.pill.success {
+		background: #dcfce7;
+		border-color: #bbf7d0;
 	}
 
 	.alert {
 		background: white;
 		padding: 1rem 1.25rem;
-		border-radius: 10px;
+		border-radius: 12px;
 		margin-bottom: 1.5rem;
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
 		border: 1px solid #e2e8f0;
 	}
 
 	.alert.success {
 		background: #f0fdf4;
-		border-color: #86efac;
+		border-color: #bbf7d0;
 		color: #166534;
 	}
 
 	.alert.error {
 		background: #fef2f2;
-		border-color: #fca5a5;
+		border-color: #fecdd3;
 		color: #991b1b;
 	}
 
@@ -319,34 +390,34 @@
 	}
 
 	.card {
-		background: white;
-		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.8);
+		border-radius: 18px;
 		padding: 2rem;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-		border: 1px solid #e2e8f0;
+		box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+		border: 1px solid rgba(148, 163, 184, 0.35);
 	}
 
 	.section-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 2rem;
+		margin-bottom: 1.5rem;
 	}
 
 	h2 {
-		font-size: 1.5rem;
+		font-size: 1.45rem;
 		margin: 0;
 		color: #0f172a;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.btn {
-		padding: 0.625rem 1.25rem;
+		padding: 0.675rem 1.3rem;
 		border: none;
-		border-radius: 8px;
+		border-radius: 10px;
 		cursor: pointer;
-		font-size: 0.9375rem;
-		font-weight: 500;
+		font-size: 0.95rem;
+		font-weight: 700;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -355,19 +426,19 @@
 	}
 
 	.btn-primary {
-		background: #3b82f6;
+		background: linear-gradient(135deg, #2563eb, #7c3aed);
 		color: white;
+		box-shadow: 0 12px 30px rgba(37, 99, 235, 0.25);
 	}
 
 	.btn-primary:hover:not(:disabled) {
-		background: #2563eb;
 		transform: translateY(-1px);
-		box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
+		box-shadow: 0 16px 40px rgba(37, 99, 235, 0.3);
 	}
 
 	.btn-secondary {
-		background: #f1f5f9;
-		color: #334155;
+		background: #eef2f7;
+		color: #0f172a;
 	}
 
 	.btn-secondary:hover {
@@ -376,21 +447,23 @@
 
 	.forms-grid {
 		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 		gap: 1rem;
 	}
 
 	.form-card {
-		background: #fafafa;
+		background: linear-gradient(145deg, #ffffff, #f8fafc);
 		border: 1px solid #e2e8f0;
-		border-radius: 10px;
-		padding: 1.5rem;
+		border-radius: 14px;
+		padding: 1.4rem 1.2rem;
 		transition: all 0.2s ease;
+		box-shadow: 0 10px 30px rgba(148, 163, 184, 0.15);
 	}
 
 	.form-card:hover {
 		border-color: #cbd5e0;
-		background: white;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+		transform: translateY(-3px);
+		box-shadow: 0 16px 40px rgba(148, 163, 184, 0.28);
 	}
 
 	.form-header {
@@ -408,15 +481,15 @@
 	}
 
 	.form-title {
-		font-weight: 600;
+		font-weight: 700;
 		color: #0f172a;
-		font-size: 1.125rem;
+		font-size: 1.1rem;
 	}
 
 	.form-description {
-		color: #64748b;
+		color: #475569;
 		margin-bottom: 1rem;
-		font-size: 0.9375rem;
+		font-size: 0.95rem;
 		line-height: 1.5;
 	}
 
@@ -424,8 +497,8 @@
 		display: flex;
 		align-items: center;
 		gap: 0.75rem;
-		font-size: 0.875rem;
-		color: #64748b;
+		font-size: 0.9rem;
+		color: #475569;
 	}
 
 	.meta-item {
@@ -447,64 +520,69 @@
 		background: white;
 		border: 1px solid #e2e8f0;
 		padding: 0.5rem;
-		border-radius: 6px;
+		border-radius: 8px;
 		cursor: pointer;
 		transition: all 0.15s ease;
-		color: #64748b;
+		color: #475569;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 	}
 
 	.btn-icon:hover {
-		background: #f8fafc;
+		background: #eef2f7;
 		border-color: #cbd5e0;
-		color: #3b82f6;
+		color: #2563eb;
 		transform: translateY(-1px);
 	}
 
 	.btn-icon-danger:hover {
 		color: #dc2626;
-		border-color: #fca5a5;
+		border-color: #fecdd3;
 		background: #fef2f2;
 	}
 
 	.status-pill {
 		padding: 0.25rem 0.625rem;
-		border-radius: 6px;
-		font-size: 0.75rem;
-		font-weight: 500;
+		border-radius: 8px;
+		font-size: 0.8rem;
+		font-weight: 700;
+		background: #f1f5f9;
+		color: #475569;
 	}
 
 	.status-pill.inactive {
-		background: #f1f5f9;
-		color: #64748b;
+		background: #fef3c7;
+		color: #92400e;
 	}
 
 	.empty-state {
 		text-align: center;
-		padding: 4rem 1rem;
-		color: #64748b;
+		padding: 3.5rem 1rem;
+		color: #475569;
+		background: #f8fafc;
+		border: 1px dashed #e2e8f0;
+		border-radius: 14px;
 	}
 
 	.empty-icon {
-		margin: 0 auto 1.5rem;
+		margin: 0 auto 1.25rem;
 		color: #cbd5e0;
 	}
 
 	.empty-state p {
-		margin: 0.5rem 0;
+		margin: 0.35rem 0;
 		font-size: 1rem;
 	}
 
 	.empty-state p:first-of-type {
-		font-weight: 500;
-		color: #475569;
+		font-weight: 600;
+		color: #0f172a;
 	}
 
 	.empty-hint {
-		font-size: 0.875rem;
-		color: #94a3b8;
+		font-size: 0.95rem;
+		color: #475569;
 	}
 
 	.modal-overlay {
@@ -513,8 +591,8 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(15, 23, 42, 0.5);
-		backdrop-filter: blur(4px);
+		background: rgba(15, 23, 42, 0.35);
+		backdrop-filter: blur(6px);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -529,20 +607,21 @@
 
 	.modal {
 		background: white;
-		border-radius: 12px;
+		border-radius: 16px;
 		padding: 2rem;
-		max-width: 500px;
-		width: 90%;
+		max-width: 520px;
+		width: 92%;
 		max-height: 90vh;
 		overflow-y: auto;
-		box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+		box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
 		animation: slideUp 0.2s ease;
+		border: 1px solid #e2e8f0;
 	}
 
 	@keyframes slideUp {
 		from {
 			opacity: 0;
-			transform: translateY(20px);
+			transform: translateY(16px);
 		}
 		to {
 			opacity: 1;
@@ -561,23 +640,23 @@
 		font-size: 1.25rem;
 		margin: 0;
 		color: #0f172a;
-		font-weight: 600;
+		font-weight: 700;
 	}
 
 	.btn-close {
 		background: none;
 		border: none;
 		cursor: pointer;
-		color: #64748b;
+		color: #475569;
 		padding: 0.375rem;
-		border-radius: 6px;
+		border-radius: 8px;
 		transition: all 0.15s ease;
 		display: flex;
 		align-items: center;
 	}
 
 	.btn-close:hover {
-		background: #f8fafc;
+		background: #f1f5f9;
 		color: #0f172a;
 	}
 
@@ -588,29 +667,29 @@
 	label {
 		display: block;
 		margin-bottom: 0.5rem;
-		font-weight: 500;
-		color: #334155;
-		font-size: 0.9375rem;
+		font-weight: 600;
+		color: #0f172a;
+		font-size: 0.95rem;
 	}
 
 	input[type='text'],
 	textarea {
 		width: 100%;
-		padding: 0.75rem;
+		padding: 0.8rem 0.85rem;
 		border: 1px solid #e2e8f0;
-		border-radius: 8px;
+		border-radius: 10px;
 		box-sizing: border-box;
 		font-family: inherit;
-		font-size: 0.9375rem;
+		font-size: 0.95rem;
 		transition: all 0.15s ease;
-		background: white;
+		background: #f8fafc;
 	}
 
 	input[type='text']:focus,
 	textarea:focus {
 		outline: none;
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+		border-color: #6366f1;
+		box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
 	}
 
 	textarea {
@@ -625,8 +704,14 @@
 	}
 
 	@media (max-width: 768px) {
+		.page-header {
+			flex-direction: column;
+			gap: 1rem;
+			align-items: flex-start;
+		}
+
 		h1 {
-			font-size: 1.875rem;
+			font-size: 1.8rem;
 		}
 
 		.card {

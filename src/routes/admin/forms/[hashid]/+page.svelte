@@ -134,17 +134,24 @@
 <div class="container">
 	<header>
 		<div class="header-content">
-			<div>
+			<div class="header-left">
+				<a href="/.well-known/placenet/admin?token={data.token}" class="btn btn-secondary">
+					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="19" y1="12" x2="5" y2="12"></line>
+						<polyline points="12 19 5 12 12 5"></polyline>
+					</svg>
+					Back to Forms
+				</a>
 				<h1>Form Builder</h1>
-				<p class="subtitle">Design your form</p>
 			</div>
-			<a href="/.well-known/placenet/admin?token={data.token}" class="btn btn-secondary">
+			<button type="submit" form="form-builder" class="btn btn-primary">
 				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<line x1="19" y1="12" x2="5" y2="12"></line>
-					<polyline points="12 19 5 12 12 5"></polyline>
+					<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+					<polyline points="17 21 17 13 7 13 7 21"></polyline>
+					<polyline points="7 3 7 8 15 8"></polyline>
 				</svg>
-				Back to Forms
-			</a>
+				Save Form
+			</button>
 		</div>
 	</header>
 
@@ -155,6 +162,7 @@
 
 		<main class="editor">
 			<form
+				id="form-builder"
 				method="POST"
 				action="?/updateForm&token={data.token}"
 				use:enhance={() => {
@@ -193,17 +201,6 @@
 
 					<input type="hidden" name="fields" value={JSON.stringify(fields)} />
 				</div>
-
-				<div class="save-section">
-					<button type="submit" class="btn btn-primary btn-lg">
-						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-							<polyline points="17 21 17 13 7 13 7 21"></polyline>
-							<polyline points="7 3 7 8 15 8"></polyline>
-						</svg>
-						Save Form
-					</button>
-				</div>
 			</form>
 		</main>
 	</div>
@@ -214,12 +211,30 @@
 
 	header {
 		margin-bottom: 2rem;
+		position: sticky;
+		top: 0;
+		background: linear-gradient(180deg, #f7f9fb, rgba(247, 249, 251, 0.95));
+		z-index: 100;
+		padding: 1rem 0;
+		margin-top: -1rem;
+		backdrop-filter: blur(8px);
 	}
 
 	.header-content {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		gap: 1rem;
+	}
+
+	.header-left {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.header-left h1 {
+		margin: 0;
 	}
 
 	.builder-layout {
@@ -238,10 +253,6 @@
 		gap: 1rem;
 	}
 
-	.save-section {
-		text-align: center;
-		padding: 2rem 0 0;
-	}
 
 	@media (max-width: 968px) {
 		.builder-layout {

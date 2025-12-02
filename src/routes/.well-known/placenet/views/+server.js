@@ -41,9 +41,11 @@ export async function GET({ url, request }) {
 
 		// Convert forms to views format expected by dashboard
 		// Dashboard expects: { label: string, path: string }
+		// Use absolute URL so dashboard navigates to formly domain, not its own domain
+		const baseUrl = url.origin;
 		const views = forms.map((form) => ({
 			label: form.title,
-			path: `/form/${encodeFormId(form.id)}`
+			path: `${baseUrl}/form/${encodeFormId(form.id)}`
 		}));
 
 		return json(views);

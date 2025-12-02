@@ -216,8 +216,6 @@
 		</div>
 	</header>
 
-	<Alert {message} {messageType} />
-
 	<div class="builder-layout">
 		<FieldSidebar onAddField={addField} onTypeDragStart={handleTypeDragStart} />
 
@@ -284,6 +282,21 @@
 	</div>
 </div>
 
+{#if message}
+	<div class="toast {messageType}">
+		<svg class="toast-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			{#if messageType === 'success'}
+				<polyline points="4 12 9 17 20 6"></polyline>
+			{:else}
+				<circle cx="12" cy="12" r="10"></circle>
+				<line x1="12" y1="8" x2="12" y2="12"></line>
+				<line x1="12" y1="16" x2="12.01" y2="16"></line>
+			{/if}
+		</svg>
+		<span>{message}</span>
+	</div>
+{/if}
+
 <style>
 	@import './components/shared.css';
 
@@ -316,13 +329,13 @@
 	}
 
 	.builder-layout {
-		display: grid;
-		grid-template-columns: 260px 1fr;
-		gap: 2rem;
+		display: flex;
+		max-width: 100%;
 	}
 
 	.editor {
 		flex: 1;
+		max-width: calc(100% - 320px);
 	}
 
 	.fields-list {
@@ -338,10 +351,54 @@
 		padding: 0.5rem;
 	}
 
+	.toast {
+		position: fixed;
+		right: 1.25rem;
+		top: 1.25rem;
+		background: white;
+		border: 1px solid #e2e8f0;
+		border-left: 4px solid #2563eb;
+		box-shadow: 0 14px 40px rgba(15, 23, 42, 0.18);
+		padding: 0.9rem 1rem;
+		border-radius: 12px;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		z-index: 20;
+		min-width: 260px;
+		animation: slideIn 0.3s ease-out;
+	}
+
+	@keyframes slideIn {
+		from {
+			transform: translateX(100%);
+			opacity: 0;
+		}
+		to {
+			transform: translateX(0);
+			opacity: 1;
+		}
+	}
+
+	.toast.success {
+		border-left-color: #22c55e;
+	}
+
+	.toast.error {
+		border-left-color: #ef4444;
+	}
+
+	.toast .toast-icon {
+		color: inherit;
+	}
 
 	@media (max-width: 968px) {
 		.builder-layout {
-			grid-template-columns: 1fr;
+			flex-direction: column;
+		}
+
+		.editor {
+			max-width: 100%;
 		}
 	}
 </style>

@@ -6,8 +6,8 @@
 </script>
 
 <aside class="sidebar">
-	<h3>Add Fields</h3>
-	<p class="sidebar-hint">Click to add or drag fields to the canvas</p>
+	<h3>Construye tu formulario</h3>
+	<p class="sidebar-hint">Empieza por los básicos y luego añade opciones o reordena.</p>
 	<div class="field-types">
 		{#each fieldTypes as fieldType}
 			<button

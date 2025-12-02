@@ -6,7 +6,11 @@
 	import { goto } from '$app/navigation';
 
 	function handleMessage(event) {
-		const type = event.data.type;
+		const type = event.data?.type;
+
+		if (type === 'auth' && event.data.goto) {
+			goto(event.data.goto);
+		}
 
 		if (type === 'goto') {
 			goto(event.data.path);

@@ -81,11 +81,26 @@
 			</div>
 		</div>
 
-		{#if field.type !== 'select' && field.type !== 'radio' && field.type !== 'checkbox'}
+		{#if field.type === 'media'}
 			<div class="form-group">
-				<label for="placeholder-{field.id}">Placeholder</label>
-				<input type="text" id="placeholder-{field.id}" bind:value={field.placeholder} placeholder="Placeholder text" />
+				<label>Media Type</label>
+				<div class="media-options">
+					<label class="radio-inline">
+						<input type="radio" bind:group={field.mediaType} value="upload" />
+						Upload File
+					</label>
+					<label class="radio-inline">
+						<input type="radio" bind:group={field.mediaType} value="embed" />
+						Embed URL
+					</label>
+				</div>
 			</div>
+			{#if field.mediaType === 'embed'}
+				<div class="form-group">
+					<label for="placeholder-{field.id}">Placeholder URL</label>
+					<input type="text" id="placeholder-{field.id}" bind:value={field.placeholder} placeholder="https://youtube.com/..." />
+				</div>
+			{/if}
 		{/if}
 
 		{#if field.type === 'select' || field.type === 'radio' || field.type === 'checkbox'}

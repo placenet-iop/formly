@@ -65,7 +65,8 @@
 			placeholder: '',
 			required: false,
 			hasTag: false,
-			options: type === 'select' || type === 'radio' || type === 'checkbox' ? [{ value: 'Option 1', tag: '' }] : []
+			options: type === 'select' || type === 'radio' || type === 'checkbox' ? [{ value: 'Option 1', tag: '' }] : [],
+			mediaType: type === 'media' ? 'upload' : undefined
 		};
 		fields = [...fields, newField];
 	}

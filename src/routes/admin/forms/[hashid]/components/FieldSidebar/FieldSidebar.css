@@ -16,11 +16,47 @@
 	backdrop-filter: blur(8px);
 }
 
+.sidebar-header {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	margin-bottom: 0.75rem;
+	padding-bottom: 0.75rem;
+	border-bottom: 1px solid #e2e8f0;
+}
+
 .sidebar h3 {
-	font-size: 1rem;
-	margin: 0 0 0.5rem 0;
+	font-size: 1.1rem;
+	margin: 0;
 	color: #0f172a;
 	font-weight: 700;
+}
+
+.btn-save {
+	background: #3b82f6;
+	color: white;
+	border: none;
+	border-radius: 8px;
+	padding: 0.65rem 1rem;
+	font-size: 0.9rem;
+	font-weight: 600;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.btn-save:hover {
+	background: #2563eb;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.btn-save:active {
+	transform: translateY(0);
 }
 
 .sidebar-hint {

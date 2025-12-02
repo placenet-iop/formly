@@ -137,13 +137,40 @@
 
 	function handleDragOver(event, index) {
 		event.preventDefault();
-		if (dragOverIndex !== index) {
+		event.stopPropagation();
+		if (dragIndex !== null && dragIndex !== index) {
+			dragOverIndex = index;
+		} else if (paletteDragType) {
 			dragOverIndex = index;
 		}
 	}
 
 	function handleDrop(index, event) {
-		event?.stopPropagation();
+		event.preventDefault();
+		event.stopPropagation();
+
+		// Handle drop from palette (new field)
+		if (paletteDragType) {
+			const newField = {
+				id: Date.now().toString(),
+				type: paletteDragType,
+				label: '',
+				placeholder: '',
+				required: false,
+				hasTag: false,
+				options: paletteDragType === 'select' || paletteDragType === 'radio' || paletteDragType === 'checkbox' ? [{ value: 'Option 1', tag: '' }] : [],
+				mediaType: paletteDragType === 'media' ? 'upload' : undefined
+			};
+			const newFields = [...fields];
+			newFields.splice(index, 0, newField);
+			fields = newFields;
+			paletteDragType = '';
+			dragOverIndex = null;
+			isDraggingOver = false;
+			return;
+		}
+
+		// Handle reordering existing fields
 		if (dragIndex === null || dragIndex === index) {
 			dragIndex = null;
 			dragOverIndex = null;
@@ -160,6 +187,7 @@
 	function handleDragEnd() {
 		dragIndex = null;
 		dragOverIndex = null;
+		paletteDragType = '';
 	}
 
 	function handleTypeDragStart(type, event) {
@@ -194,31 +222,20 @@
 </svelte:head>
 
 <div class="container">
-	<header>
-		<div class="header-content">
-			<div class="header-left">
-				<a href="/.well-known/placenet/admin?token={data.token}" class="btn btn-secondary">
-					<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<line x1="19" y1="12" x2="5" y2="12"></line>
-						<polyline points="12 19 5 12 12 5"></polyline>
-					</svg>
-					Back to Forms
-				</a>
-				<h1>Form Builder</h1>
-			</div>
-			<button type="submit" form="form-builder" class="btn btn-primary">
-				<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-					<polyline points="17 21 17 13 7 13 7 21"></polyline>
-					<polyline points="7 3 7 8 15 8"></polyline>
-				</svg>
-				Save Form
-			</button>
-		</div>
-	</header>
+	<a href="/.well-known/placenet/admin?token={data.token}" class="btn-back">
+		<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+			<line x1="19" y1="12" x2="5" y2="12"></line>
+			<polyline points="12 19 5 12 12 5"></polyline>
+		</svg>
+		Back to Forms
+	</a>
 
 	<div class="builder-layout">
-		<FieldSidebar onAddField={addField} onTypeDragStart={handleTypeDragStart} />
+		<FieldSidebar
+			onAddField={addField}
+			onTypeDragStart={handleTypeDragStart}
+			{formTitle}
+		/>
 
 		<main class="editor">
 			<form
@@ -246,33 +263,49 @@
 							onDragLeave={handleDragLeave}
 						/>
 					{:else}
-						<div
-							class="fields-list"
-							class:drop-target={isDraggingOver}
-							ondragover={handleFieldListDragOver}
-							ondrop={handleFieldListDrop}
-							ondragleave={handleDragLeave}
-						>
+						<div class="fields-list">
 							{#each fields as field, index (field.id)}
-								<FieldEditor
-									{field}
-									{index}
-									totalFields={fields.length}
-									onMoveUp={moveFieldUp}
-									onMoveDown={moveFieldDown}
-									onRemove={removeField}
-									onUpdateOption={updateOption}
-									onUpdateOptionTag={updateOptionTag}
-									onRemoveOption={removeOption}
-									onAddOption={addOption}
-									onDragStart={handleDragStart}
-									onDragOver={handleDragOver}
-									onDrop={handleDrop}
-									onDragEnd={handleDragEnd}
-									isDragging={dragIndex === index}
-									isDraggedOver={dragOverIndex === index}
-								/>
+								<div class="field-wrapper">
+									{#if dragIndex !== null || paletteDragType}
+										<div
+											class="drop-zone"
+											class:active={dragOverIndex === index}
+											ondragover={(event) => handleDragOver(event, index)}
+											ondrop={(event) => handleDrop(index, event)}
+										>
+											<span class="drop-zone-text">⬇ Drop here</span>
+										</div>
+									{/if}
+									<FieldEditor
+										{field}
+										{index}
+										totalFields={fields.length}
+										onMoveUp={moveFieldUp}
+										onMoveDown={moveFieldDown}
+										onRemove={removeField}
+										onUpdateOption={updateOption}
+										onUpdateOptionTag={updateOptionTag}
+										onRemoveOption={removeOption}
+										onAddOption={addOption}
+										onDragStart={handleDragStart}
+										onDragOver={handleDragOver}
+										onDrop={handleDrop}
+										onDragEnd={handleDragEnd}
+										isDragging={dragIndex === index}
+										isDraggedOver={dragOverIndex === index}
+									/>
+								</div>
 							{/each}
+							{#if (dragIndex !== null || paletteDragType) && fields.length > 0}
+								<div
+									class="drop-zone"
+									class:active={dragOverIndex === fields.length}
+									ondragover={(event) => handleDragOver(event, fields.length)}
+									ondrop={(event) => handleDrop(fields.length, event)}
+								>
+									<span class="drop-zone-text">⬇ Drop at end</span>
+								</div>
+							{/if}
 						</div>
 					{/if}
 
@@ -301,42 +334,21 @@
 <style>
 	@import './components/shared.css';
 
-	header {
-		margin-bottom: 2rem;
-		position: sticky;
-		top: 0;
-		background: linear-gradient(180deg, #f7f9fb, rgba(247, 249, 251, 0.95));
-		z-index: 100;
-		padding: 1rem 0;
-		margin-top: -1rem;
-		backdrop-filter: blur(8px);
-	}
-
-	.header-content {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: 1rem;
-	}
-
-	.header-left {
-		display: flex;
-		flex-direction: column;
-		gap: 0.75rem;
-	}
-
-	.header-left h1 {
-		margin: 0;
+	.container {
+		padding: 1.5rem 1.25rem;
+		min-height: 100vh;
 	}
 
 	.builder-layout {
 		display: flex;
 		max-width: 100%;
+		gap: 1.5rem;
 	}
 
 	.editor {
 		flex: 1;
 		max-width: calc(100% - 320px);
+		padding-top: 3rem;
 	}
 
 	.fields-list {
@@ -350,6 +362,72 @@
 		background: #eff6ff;
 		border-radius: 10px;
 		padding: 0.5rem;
+	}
+
+	.field-wrapper {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.drop-zone {
+		padding: 0.75rem;
+		border: 2px dashed #cbd5e0;
+		border-radius: 8px;
+		background: #f8fafc;
+		text-align: center;
+		opacity: 0.6;
+		transition: all 0.2s ease;
+		margin: 0.25rem 0;
+	}
+
+	.drop-zone.active {
+		border-color: #3b82f6;
+		background: #eff6ff;
+		opacity: 1;
+		border-style: solid;
+		box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+	}
+
+	.drop-zone-text {
+		font-size: 0.875rem;
+		color: #64748b;
+		font-weight: 500;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+	}
+
+	.btn-back {
+		position: fixed;
+		top: 1.5rem;
+		left: 1.5rem;
+		z-index: 50;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.65rem 1rem;
+		background: white;
+		border: 1px solid #e2e8f0;
+		border-radius: 8px;
+		color: #334155;
+		text-decoration: none;
+		font-size: 0.9375rem;
+		font-weight: 500;
+		box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+		transition: all 0.2s ease;
+		backdrop-filter: blur(8px);
+	}
+
+	.btn-back:hover {
+		background: #f8fafc;
+		border-color: #cbd5e0;
+		transform: translateX(-2px);
+		box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+	}
+
+	.btn-back svg {
+		flex-shrink: 0;
 	}
 
 	.toast {
@@ -400,6 +478,14 @@
 
 		.editor {
 			max-width: 100%;
+			padding-top: 4rem;
+		}
+
+		.btn-back {
+			top: 1rem;
+			left: 1rem;
+			font-size: 0.875rem;
+			padding: 0.5rem 0.75rem;
 		}
 	}
 </style>

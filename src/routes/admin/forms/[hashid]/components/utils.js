@@ -23,11 +23,11 @@ export function getIcon(iconName) {
 }
 
 export const fieldTypes = [
-	{ value: 'title', label: 'Title (Display Text)', icon: 'type' },
-	{ value: 'description', label: 'Description (Display Paragraph)', icon: 'align-left' },
+	{ value: 'title', label: 'Title', icon: 'type' },
+	{ value: 'description', label: 'Description', icon: 'align-left' },
 	{ value: 'select', label: 'Dropdown', icon: 'chevron-down' },
 	{ value: 'radio', label: 'Radio Buttons', icon: 'circle' },
 	{ value: 'checkbox', label: 'Checkboxes', icon: 'check-square' },
-	{ value: 'media', label: 'Media (Image/Video/Embed)', icon: 'image' }
+	{ value: 'media', label: 'Media', icon: 'image' }
 ];
 

@@ -94,13 +94,6 @@
 	{:else}
 		<div class="form-wrapper">
 			<header class="form-header">
-				<div class="pill">
-					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-						<rect x="3" y="5" width="18" height="14" rx="2"></rect>
-						<path d="M7 9h10M7 13h6"></path>
-					</svg>
-					<span>Formulario seguro</span>
-				</div>
 				<h1>{formData?.title || 'Form'}</h1>
 				{#if formData?.description}
 					<p class="form-description">{formData.description}</p>

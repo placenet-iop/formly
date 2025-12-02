@@ -94,7 +94,11 @@
 				<p class="subtitle">{submissions.length} {submissions.length === 1 ? 'submission' : 'submissions'}</p>
 			</div>
 			<a href="/.well-known/placenet/admin?token={data.token}" class="btn btn-secondary">
-				← Back to Forms
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<polyline points="15 18 9 12 15 6"></polyline>
+					<line x1="9" y1="12" x2="21" y2="12"></line>
+				</svg>
+				Back to Forms
 			</a>
 		</div>
 	</header>
@@ -104,10 +108,18 @@
 			<h2>All Submissions</h2>
 			<div class="export-buttons">
 				<button class="btn btn-secondary" onclick={exportToCSV} disabled={submissions.length === 0}>
-					📊 Export CSV
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<rect x="3" y="4" width="18" height="16" rx="2"></rect>
+						<path d="M7 9h10M7 13h6M9 17h6"></path>
+					</svg>
+					Export CSV
 				</button>
 				<button class="btn btn-secondary" onclick={exportToJSON} disabled={submissions.length === 0}>
-					📄 Export JSON
+					<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<path d="M7 3h8l5 5v13a1 1 0 0 1-1 1H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"></path>
+						<path d="M7 8h7V3"></path>
+					</svg>
+					Export JSON
 				</button>
 			</div>
 		</div>
@@ -128,10 +140,21 @@
 									<div class="user-details">
 										<span class="user-name">{userMeta.label || userMeta.avatar_name || submission.avatar_id}</span>
 										{#if userMeta.email}
-											<span class="meta">📧 {userMeta.email}</span>
+											<span class="meta">
+												<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+													<path d="M4 4h16v16H4z"></path>
+													<polyline points="4 4 12 12 20 4"></polyline>
+												</svg>
+												{userMeta.email}
+											</span>
 										{/if}
 										{#if userMeta.phone}
-											<span class="meta">📱 {userMeta.phone}</span>
+											<span class="meta">
+												<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+													<path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"></path>
+												</svg>
+												{userMeta.phone}
+											</span>
 										{/if}
 									</div>
 								</div>
@@ -157,21 +180,32 @@
 			</div>
 		{:else}
 			<div class="empty-state">
-				<div class="empty-icon">📭</div>
-				<p>No submissions yet</p>
-				<p class="empty-hint">Submissions will appear here once users fill out the form</p>
+				<div class="empty-icon">
+					<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+						<rect x="3" y="4" width="18" height="16" rx="2"></rect>
+						<path d="M7 9h10M7 13h6"></path>
+						<polyline points="3 8 12 13 21 8"></polyline>
+					</svg>
+				</div>
+				<p class="empty-title">No submissions yet</p>
+				<p class="empty-hint">Recibirás las respuestas aquí en cuanto los usuarios completen el formulario.</p>
 			</div>
 		{/if}
 	</section>
 </div>
 
 <style>
+	@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
 	:global(body) {
-		background: #fefdfc;
+		background: radial-gradient(circle at 12% 12%, rgba(59, 130, 246, 0.1), transparent 22%),
+			radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 18%),
+			linear-gradient(180deg, #f7f9fb 0%, #eef2f7 35%, #f7f9fb 100%);
 		min-height: 100vh;
 		margin: 0;
-		padding: 2rem 1rem;
-		font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+		padding: 2.25rem 1rem 2.5rem;
+		font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
+		color: #0f172a;
 	}
 
 	.container {
@@ -180,7 +214,7 @@
 	}
 
 	header {
-		margin-bottom: 2rem;
+		margin-bottom: 1.75rem;
 	}
 
 	.header-content {
@@ -191,36 +225,38 @@
 
 	h1 {
 		font-size: 2rem;
-		margin: 0 0 0.5rem 0;
-		color: #2d3748;
+		margin: 0 0 0.35rem 0;
+		color: #0f172a;
 	}
 
 	.subtitle {
 		font-size: 1rem;
-		color: #718096;
+		color: #475569;
 		margin: 0;
+		font-weight: 600;
 	}
 
 	.card {
-		background: white;
-		border-radius: 12px;
-		padding: 2rem;
+		background: rgba(255, 255, 255, 0.9);
+		border-radius: 18px;
+		padding: 1.75rem;
 		margin-bottom: 1.5rem;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-		border: 1px solid #e2e8f0;
+		box-shadow: 0 22px 70px rgba(15, 23, 42, 0.12);
+		border: 1px solid rgba(148, 163, 184, 0.35);
 	}
 
 	.section-header {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		margin-bottom: 2rem;
+		margin-bottom: 1.5rem;
 	}
 
 	h2 {
-		font-size: 1.5rem;
+		font-size: 1.45rem;
 		margin: 0;
-		color: #2d3748;
+		color: #0f172a;
+		font-weight: 700;
 	}
 
 	.export-buttons {
@@ -229,12 +265,12 @@
 	}
 
 	.btn {
-		padding: 0.75rem 1.5rem;
+		padding: 0.7rem 1.4rem;
 		border: none;
-		border-radius: 8px;
+		border-radius: 10px;
 		cursor: pointer;
-		font-size: 1rem;
-		font-weight: 600;
+		font-size: 0.95rem;
+		font-weight: 700;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
@@ -243,17 +279,19 @@
 	}
 
 	.btn-secondary {
-		background: #e2e8f0;
-		color: #2d3748;
+		background: #eef2f7;
+		color: #0f172a;
 	}
 
 	.btn-secondary:hover:not(:disabled) {
-		background: #cbd5e0;
+		background: #e2e8f0;
+		box-shadow: 0 12px 30px rgba(148, 163, 184, 0.25);
 	}
 
 	.btn:disabled {
-		opacity: 0.5;
+		opacity: 0.6;
 		cursor: not-allowed;
+		box-shadow: none;
 	}
 
 	.submissions-list {
@@ -263,16 +301,18 @@
 	}
 
 	.submission-card {
-		background: #f7fafc;
-		border: 2px solid #e2e8f0;
-		border-radius: 12px;
-		padding: 1.5rem;
+		background: #fff;
+		border: 1px solid #e2e8f0;
+		border-radius: 14px;
+		padding: 1.4rem;
 		transition: all 0.2s;
+		box-shadow: 0 14px 40px rgba(148, 163, 184, 0.18);
 	}
 
 	.submission-card:hover {
 		border-color: #cbd5e0;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+		box-shadow: 0 18px 48px rgba(148, 163, 184, 0.22);
+		transform: translateY(-2px);
 	}
 
 	.submission-header {
@@ -307,18 +347,21 @@
 	}
 
 	.user-name {
-		font-weight: 600;
-		color: #4a5568;
+		font-weight: 700;
+		color: #0f172a;
 		font-size: 0.95rem;
 	}
 
 	.meta {
-		color: #718096;
-		font-size: 0.85rem;
+		color: #475569;
+		font-size: 0.9rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
 	}
 
 	.date {
-		color: #718096;
+		color: #475569;
 		font-size: 0.9rem;
 		white-space: nowrap;
 	}
@@ -326,27 +369,27 @@
 	.submission-body {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-		gap: 1rem;
+		gap: 0.9rem;
 	}
 
 	.response-item {
-		padding: 0.75rem;
-		background: white;
-		border-radius: 8px;
+		padding: 0.85rem;
+		background: #f8fafc;
+		border-radius: 10px;
 		border: 1px solid #e2e8f0;
 	}
 
 	.response-label {
-		font-weight: 600;
-		color: #4a5568;
+		font-weight: 700;
+		color: #0f172a;
 		font-size: 0.85rem;
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.4rem;
 		text-transform: uppercase;
-		letter-spacing: 0.5px;
+		letter-spacing: 0.6px;
 	}
 
 	.response-value {
-		color: #2d3748;
+		color: #0f172a;
 		font-size: 1rem;
 		word-wrap: break-word;
 	}
@@ -354,22 +397,32 @@
 	.empty-state {
 		text-align: center;
 		padding: 3rem 1rem;
-		color: #718096;
+		color: #475569;
+		background: #f8fafc;
+		border: 1px dashed #e2e8f0;
+		border-radius: 14px;
 	}
 
 	.empty-icon {
 		font-size: 4rem;
 		margin-bottom: 1rem;
-		opacity: 0.5;
+		opacity: 0.8;
+		color: #cbd5e0;
+	}
+
+	.empty-title {
+		margin: 0;
+		font-weight: 700;
+		color: #0f172a;
 	}
 
 	.empty-state p {
-		margin: 0.5rem 0;
+		margin: 0.4rem 0;
 	}
 
 	.empty-hint {
-		font-size: 0.875rem;
-		opacity: 0.8;
+		font-size: 0.95rem;
+		color: #475569;
 	}
 
 	@media (max-width: 768px) {

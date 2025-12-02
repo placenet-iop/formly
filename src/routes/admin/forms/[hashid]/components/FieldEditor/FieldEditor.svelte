@@ -58,28 +58,40 @@
 	</div>
 
 	<div class="field-body">
-		<div class="form-row">
-			<div class="form-group flex-1">
-				<label for="label-{field.id}">Label *</label>
-				<input type="text" id="label-{field.id}" bind:value={field.label} required placeholder="Field label" />
+		{#if field.type === 'title'}
+			<div class="form-group">
+				<label for="label-{field.id}">Title Text *</label>
+				<input type="text" id="label-{field.id}" bind:value={field.label} required placeholder="Enter title text to display" />
 			</div>
-			<div class="checkbox-column">
-				<div class="form-group checkbox-group checkbox-item">
-					<label for="required-{field.id}">
-						<input type="checkbox" id="required-{field.id}" bind:checked={field.required} />
-						Required
-					</label>
+		{:else if field.type === 'description'}
+			<div class="form-group">
+				<label for="label-{field.id}">Description Text *</label>
+				<textarea id="label-{field.id}" bind:value={field.label} required placeholder="Enter description text to display" rows="3"></textarea>
+			</div>
+		{:else}
+			<div class="form-row">
+				<div class="form-group flex-1">
+					<label for="label-{field.id}">Label *</label>
+					<input type="text" id="label-{field.id}" bind:value={field.label} required placeholder="Field label" />
 				</div>
-				{#if field.type === 'select' || field.type === 'radio' || field.type === 'checkbox'}
+				<div class="checkbox-column">
 					<div class="form-group checkbox-group checkbox-item">
-						<label for="hasTag-{field.id}">
-							<input type="checkbox" id="hasTag-{field.id}" bind:checked={field.hasTag} />
-							Add tag
+						<label for="required-{field.id}">
+							<input type="checkbox" id="required-{field.id}" bind:checked={field.required} />
+							Required
 						</label>
 					</div>
-				{/if}
+					{#if field.type === 'select' || field.type === 'radio' || field.type === 'checkbox'}
+						<div class="form-group checkbox-group checkbox-item">
+							<label for="hasTag-{field.id}">
+								<input type="checkbox" id="hasTag-{field.id}" bind:checked={field.hasTag} />
+								Add tag
+							</label>
+						</div>
+					{/if}
+				</div>
 			</div>
-		</div>
+		{/if}
 
 		{#if field.type === 'media'}
 			<div class="form-group">

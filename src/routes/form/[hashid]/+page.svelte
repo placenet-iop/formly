@@ -140,15 +140,24 @@
 			>
 				<div class="fields-container">
 					{#each fields as field}
-						<div class="form-field" class:has-error={hasError(field.id)}>
-							<label for="field-{field.id}" class="field-label">
+						{#if field.type === 'title'}
+							<div class="display-title">
 								{field.label}
-								{#if field.required}
-									<span class="required">Requerido</span>
-								{/if}
-							</label>
+							</div>
+						{:else if field.type === 'description'}
+							<div class="display-description">
+								{field.label}
+							</div>
+						{:else}
+							<div class="form-field" class:has-error={hasError(field.id)}>
+								<label for="field-{field.id}" class="field-label">
+									{field.label}
+									{#if field.required}
+										<span class="required">Requerido</span>
+									{/if}
+								</label>
 
-							{#if field.type === 'text' || field.type === 'email' || field.type === 'number' || field.type === 'tel'}
+								{#if field.type === 'text' || field.type === 'email' || field.type === 'number' || field.type === 'tel'}
 								<input
 									type={field.type}
 									id="field-{field.id}"
@@ -186,8 +195,8 @@
 								>
 									<option value="">Selecciona una opción...</option>
 									{#each field.options || [] as option}
-										<option value={option} selected={getFieldValue(field.id) === option}>
-											{option}
+										<option value={option.value || option} selected={getFieldValue(field.id) === (option.value || option)}>
+											{option.value || option}
 										</option>
 									{/each}
 								</select>
@@ -198,11 +207,11 @@
 											<input
 												type="radio"
 												name="field_{field.id}"
-												value={option}
+												value={option.value || option}
 												required={field.required}
-												checked={getFieldValue(field.id) === option}
+												checked={getFieldValue(field.id) === (option.value || option)}
 											/>
-											<span>{option}</span>
+											<span>{option.value || option}</span>
 										</label>
 									{/each}
 								</div>
@@ -213,19 +222,41 @@
 											<input
 												type="checkbox"
 												name="field_{field.id}"
-												value={option}
-												checked={Array.isArray(getFieldValue(field.id)) && getFieldValue(field.id).includes(option)}
+												value={option.value || option}
+												checked={Array.isArray(getFieldValue(field.id)) && getFieldValue(field.id).includes(option.value || option)}
 											/>
-											<span>{option}</span>
+											<span>{option.value || option}</span>
 										</label>
 									{/each}
 								</div>
+							{:else if field.type === 'media'}
+								{#if field.mediaType === 'upload'}
+									<input
+										type="file"
+										id="field-{field.id}"
+										name="field_{field.id}"
+										required={field.required}
+										accept="image/*,video/*"
+										class="field-input"
+									/>
+								{:else}
+									<input
+										type="url"
+										id="field-{field.id}"
+										name="field_{field.id}"
+										placeholder={field.placeholder || 'https://youtube.com/...'}
+										required={field.required}
+										value={getFieldValue(field.id)}
+										class="field-input"
+									/>
+								{/if}
 							{/if}
 
-							{#if hasError(field.id)}
-								<div class="field-error">{getError(field.id)}</div>
-							{/if}
-						</div>
+								{#if hasError(field.id)}
+									<div class="field-error">{getError(field.id)}</div>
+								{/if}
+							</div>
+						{/if}
 					{/each}
 				</div>
 
@@ -330,6 +361,21 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.1rem;
+	}
+
+	.display-title {
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: #0f172a;
+		margin: 0.75rem 0;
+		letter-spacing: -0.01em;
+	}
+
+	.display-description {
+		font-size: 1rem;
+		color: #475569;
+		line-height: 1.6;
+		margin: 0.5rem 0;
 	}
 
 	.form-field {

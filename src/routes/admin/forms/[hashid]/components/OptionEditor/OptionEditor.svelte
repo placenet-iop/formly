@@ -10,22 +10,17 @@
 	<label>Options</label>
 	<div class="options-list">
 		{#each field.options as option, optIdx}
-			<div class="option-container">
-				<div class="option-row">
-					<input type="text" value={option.value || option} oninput={(e) => { const target = e.currentTarget; if (target) onUpdateOption(field.id, optIdx, target.value); }} placeholder="Option {optIdx + 1}" />
-					<button type="button" class="btn-icon-small" onclick={() => onRemoveOption(field.id, optIdx)} disabled={field.options.length === 1} aria-label="Remove option">
-						<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-							<line x1="18" y1="6" x2="6" y2="18"></line>
-							<line x1="6" y1="6" x2="18" y2="18"></line>
-						</svg>
-					</button>
-				</div>
+			<div class="option-row">
+				<input type="text" class="option-input" value={option.value || option} oninput={(e) => { const target = e.currentTarget; if (target) onUpdateOption(field.id, optIdx, target.value); }} placeholder="Option {optIdx + 1}" />
 				{#if field.hasTag}
-					<div class="option-tag-row">
-						<label for="tag-{field.id}-{optIdx}" class="tag-label">Tag field</label>
-						<input type="text" id="tag-{field.id}-{optIdx}" value={option.tag || ''} oninput={(e) => { const target = e.currentTarget; if (target) onUpdateOptionTag(field.id, optIdx, target.value); }} placeholder="The tag given to the user for this response" />
-					</div>
+					<input type="text" class="tag-input" id="tag-{field.id}-{optIdx}" value={option.tag || ''} oninput={(e) => { const target = e.currentTarget; if (target) onUpdateOptionTag(field.id, optIdx, target.value); }} placeholder="Tag" />
 				{/if}
+				<button type="button" class="btn-icon-small" onclick={() => onRemoveOption(field.id, optIdx)} disabled={field.options.length === 1} aria-label="Remove option">
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+						<line x1="18" y1="6" x2="6" y2="18"></line>
+						<line x1="6" y1="6" x2="18" y2="18"></line>
+					</svg>
+				</button>
 			</div>
 		{/each}
 		<button type="button" class="btn-add-option" onclick={() => onAddOption(field.id)}>

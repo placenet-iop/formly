@@ -179,6 +179,66 @@ export const actions = {
 		}
 	},
 
+	duplicateForm: async ({ request, url }) => {
+		const tokenFromUrl = url.searchParams.get('token');
+		const formData = await request.formData();
+		const formId = formData.get('formId');
+
+		const token = tokenFromUrl;
+
+		if (!token) {
+			return fail(401, { message: 'Unauthorized: Missing token', messageType: 'error' });
+		}
+
+		const payload = await getTokenPayload(token);
+
+		if (!payload || payload.role !== 'admin' || !payload.domain_id) {
+			return fail(401, { message: 'Unauthorized', messageType: 'error' });
+		}
+
+		if (!formId) {
+			return fail(400, { message: 'No form ID provided', messageType: 'error' });
+		}
+
+		const domainId = payload.domain_id;
+
+		try {
+			// Get original form
+			const originalForm = await prisma.forms.findFirst({
+				where: {
+					id: parseInt(formId),
+					domain_id: domainId
+				}
+			});
+
+			if (!originalForm) {
+				return fail(404, { message: 'Form not found', messageType: 'error' });
+			}
+
+			// Create duplicate
+			const duplicatedForm = await prisma.forms.create({
+				data: {
+					domain_id: domainId,
+					title: `${originalForm.title} (Copia)`,
+					description: originalForm.description,
+					fields: originalForm.fields,
+					is_active: false
+				}
+			});
+
+			return {
+				message: 'Formulario duplicado exitosamente',
+				messageType: 'success'
+			};
+		} catch (e) {
+			console.error('Error duplicating form:', e);
+			return fail(500, {
+				message: 'Error al duplicar el formulario',
+				messageType: 'error'
+			});
+		}
+	},
+
 	toggleActive: async ({ request, url }) => {
 		const tokenFromUrl = url.searchParams.get('token');
 		const formData = await request.formData();

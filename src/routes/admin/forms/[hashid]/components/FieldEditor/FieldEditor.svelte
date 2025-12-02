@@ -8,6 +8,7 @@
 	export let onMoveUp;
 	export let onMoveDown;
 	export let onRemove;
+	export let onDuplicate;
 	export let onUpdateOption;
 	export let onUpdateOptionTag;
 	export let onRemoveOption;
@@ -18,6 +19,16 @@
 	export let onDragEnd;
 	export let isDragging = false;
 	export let isDraggedOver = false;
+
+	function handleRemove() {
+		if (confirm(`¿Eliminar el campo "${field.label || 'Sin título'}"?`)) {
+			onRemove(field.id);
+		}
+	}
+
+	function handleDuplicate() {
+		onDuplicate(field.id);
+	}
 </script>
 
 <div
@@ -38,17 +49,23 @@
 			{fieldTypes.find((ft) => ft.value === field.type)?.label}
 		</span>
 		<div class="field-controls">
-			<button type="button" class="btn-icon" onclick={() => onMoveUp(index)} disabled={index === 0} title="Move up">
+			<button type="button" class="btn-icon" onclick={() => onMoveUp(index)} disabled={index === 0} title="Mover arriba">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="18 15 12 9 6 15"></polyline>
 				</svg>
 			</button>
-			<button type="button" class="btn-icon" onclick={() => onMoveDown(index)} disabled={index === totalFields - 1} title="Move down">
+			<button type="button" class="btn-icon" onclick={() => onMoveDown(index)} disabled={index === totalFields - 1} title="Mover abajo">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="6 9 12 15 18 9"></polyline>
 				</svg>
 			</button>
-			<button type="button" class="btn-icon btn-icon-danger" onclick={() => onRemove(field.id)} title="Delete field">
+			<button type="button" class="btn-icon" onclick={handleDuplicate} title="Duplicar campo">
+				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+					<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+				</svg>
+			</button>
+			<button type="button" class="btn-icon btn-icon-danger" onclick={handleRemove} title="Eliminar campo">
 				<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
 					<polyline points="3 6 5 6 21 6"></polyline>
 					<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>

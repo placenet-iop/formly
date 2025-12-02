@@ -75,6 +75,22 @@
 		fields = fields.filter((f) => f.id !== id);
 	}
 
+	function duplicateField(id) {
+		const fieldIndex = fields.findIndex((f) => f.id === id);
+		if (fieldIndex !== -1) {
+			const originalField = fields[fieldIndex];
+			const duplicatedField = {
+				...originalField,
+				id: Date.now().toString(),
+				label: originalField.label ? `${originalField.label} (Copia)` : '',
+				options: originalField.options ? JSON.parse(JSON.stringify(originalField.options)) : []
+			};
+			const newFields = [...fields];
+			newFields.splice(fieldIndex + 1, 0, duplicatedField);
+			fields = newFields;
+		}
+	}
+
 	function moveFieldUp(index) {
 		if (index > 0) {
 			const newFields = [...fields];
@@ -283,6 +299,7 @@
 										onMoveUp={moveFieldUp}
 										onMoveDown={moveFieldDown}
 										onRemove={removeField}
+										onDuplicate={duplicateField}
 										onUpdateOption={updateOption}
 										onUpdateOptionTag={updateOptionTag}
 										onRemoveOption={removeOption}

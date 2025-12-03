@@ -110,6 +110,13 @@
 			</div>
 		{/if}
 
+		{#if field.type === 'textarea'}
+			<div class="form-group">
+				<label for="placeholder-{field.id}">Placeholder</label>
+				<input type="text" id="placeholder-{field.id}" bind:value={field.placeholder} placeholder="Texto de ejemplo para el usuario..." />
+			</div>
+		{/if}
+
 		{#if field.type === 'media'}
 			<div class="form-group">
 				<label>Media Type</label>

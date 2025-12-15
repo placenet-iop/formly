@@ -6,7 +6,6 @@ export const handle = async ({ event, resolve }) => {
 	if (
 		event.url.pathname === '/' ||
 		event.url.pathname === '/auth' ||
-		event.url.pathname === '/user' ||
 		event.url.pathname === '/forms' ||
 		event.url.pathname === '/.well-known/placenet/admin' ||
 		event.url.pathname === '/.well-known/placenet/views' ||
@@ -17,7 +16,12 @@ export const handle = async ({ event, resolve }) => {
 		return await resolve(event);
 	}
 
+	// Check header first (ongoing requests), then URL query param (initial load)
 	let token = event.request.headers.get('x-auth-token');
+
+	if (!token) {
+		token = event.url.searchParams.get('token');
+	}
 
 	if (!token || token.length == 0) {
 		throw error(401, { message: 'Not authenticated' });
@@ -32,10 +36,12 @@ export const handle = async ({ event, resolve }) => {
 	}
 
 	// Store domain info in event.locals for use in routes
-	event.locals.domain_id = payload.domain_id;
-	event.locals.avatar_id = payload.avatar_id || 'default';
-	event.locals.role = payload.role;
-	event.locals.domain_tags = payload.domain_tags ? payload.domain_tags : [];
+	Object.assign(event.locals, {
+		domain_id: payload.domain_id,
+		avatar_id: payload.avatar_id || 'default',
+		role: payload.role,
+		domain_tags: payload.domain_tags ? payload.domain_tags : []
+	});
 
 	return await resolve(event);
 };

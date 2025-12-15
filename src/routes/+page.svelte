@@ -16,15 +16,15 @@
 			setToken(token);
 
 			try {
+				// Decode JWT to check role (without verification, just to read the payload)
+				const payload = JSON.parse(atob(token.split('.')[1]));
+
 				// Check if goto path is provided (from wapp/dashboard)
 				if (event.data.goto) {
 					status = 'Loading...';
 					goto(`${event.data.goto}?token=${token}`);
 					return;
 				}
-
-				// Decode JWT to check role (without verification, just to read the payload)
-				const payload = JSON.parse(atob(token.split('.')[1]));
 
 				// Redirect based on role
 				if (payload.role === 'admin') {
